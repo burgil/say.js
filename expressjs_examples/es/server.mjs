@@ -7,7 +7,7 @@ import express from 'express';
 // const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
-// app.use('../files', express.static(path.join(__dirname, '..')));
+// app.use('/files', express.static(path.join(__dirname, '../files')));
 // app.get('/', function (req, res) {
 //     res.sendFile(path.join(__dirname, '../front-end/mp3.html'));
 // });

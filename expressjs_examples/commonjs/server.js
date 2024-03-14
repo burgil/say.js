@@ -1,14 +1,14 @@
 const say = require('say');
 
 const express = require('express');
-// const path = require('path');
+const path = require('path');
 const app = express();
 app.use(express.json());
 const port = 80;
-// app.use('../files', express.static(path.join(__dirname, '..')));
-// app.get('/', function (req, res) {
-//     res.sendFile(path.join(__dirname, '../front-end/mp3.html'));
-// });
+app.use('/files', express.static(path.join(__dirname, '../files')));
+app.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname, '../front-end/mp3.html'));
+});
 app.post('/tts', (req, res) => {
     const { text, voice } = req.body;
     const filePath = path.join(__dirname, 'output.wav');
