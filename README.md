@@ -1,5 +1,3 @@
-<img src="https://travis-ci.org/Marak/say.js.svg?branch=master" />
-
 <img src="https://github.com/Marak/say.js/raw/master/logo.png" />
 
 ## Installing say.js fork
@@ -14,6 +12,8 @@ npm install burgil/say.js
 npm install say
 ```
 
+## Express JS Examples
+Checkout the folder `expressjs_examples` on the repo root.
 
 ## Usage
 

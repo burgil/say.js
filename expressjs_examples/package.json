@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "commonjs": "node commonjs\\server.js",
+    "es": "node es\\server.js"
   },
   "keywords": [],
   "author": "",
