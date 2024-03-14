@@ -2,6 +2,7 @@ import say from 'say';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import wav from 'wav';
 import { PassThrough, Readable } from 'stream';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
