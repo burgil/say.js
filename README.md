@@ -1,3 +1,5 @@
+# Update 9: Ok so it works, But it's kind of slow, And I found a way to make it faster! I will add another function now called streamInRealTime and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
+
 # Update 8: Trying to return Uint8Array, when it works I will create an example express.js and a frontend no worries!
 
 Goal in life: Uint8Array
