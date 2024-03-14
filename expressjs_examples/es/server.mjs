@@ -62,24 +62,19 @@ app.post('/tts-stream', async (req, res) => {
 //     try {
 //         // Stream spoken audio
 //         const spokenBuffer = await say.stream(text, voice, speed);
-        
 //         // Convert buffer to readable stream
 //         const spokenStream = new PassThrough();
 //         spokenStream.end(spokenBuffer);
-
 //         // Create a WAV encoder stream
 //         const wavEncoder = new wav.Writer({
 //             sampleRate: 16000,  // Adjust sample rate if needed
 //             channels: 1,        // Adjust number of channels if needed
 //             bitDepth: 16        // Adjust bit depth if needed
 //         });
-
 //         // Pipe the spoken stream to the WAV encoder
 //         spokenStream.pipe(wavEncoder);
-
 //         // Set the response headers
 //         res.setHeader('Content-Type', 'audio/wav');
-
 //         // Pipe the WAV encoder to the response
 //         wavEncoder.pipe(res);
 //     } catch (err) {
