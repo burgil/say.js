@@ -39,18 +39,41 @@ app.post('/tts-stream', async (req, res) => {
     try {
         // Stream spoken audio
         const spokenBuffer = await say.stream(text, voice, speed);
+        
+        // Convert buffer to Uint8Array
+        const uint8Array = new Uint8Array(spokenBuffer);
+
         // Set the response headers for WAV format
         res.set({
             'Content-Type': 'audio/wav',
             'Content-Disposition': 'attachment; filename="speech.wav"'
         });
+
         // Send the spoken audio buffer as the response
-        res.send(spokenBuffer);
+        res.send(uint8Array);
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'An error occurred while generating speech.' });
     }
 });
+
+// app.post('/tts-stream', async (req, res) => {
+//     const { text, voice, speed } = req.body;
+//     try {
+//         // Stream spoken audio
+//         const spokenBuffer = await say.stream(text, voice, speed);
+//         // Set the response headers for WAV format
+//         res.set({
+//             'Content-Type': 'audio/wav',
+//             'Content-Disposition': 'attachment; filename="speech.wav"'
+//         });
+//         // Send the spoken audio buffer as the response
+//         res.send(spokenBuffer);
+//     } catch (err) {
+//         console.error('Error:', err);
+//         res.status(500).json({ error: 'An error occurred while generating speech.' });
+//     }
+// });
 // app.post('/tts-stream', async (req, res) => {
 //     const { text, voice, speed } = req.body;
 //     try {
