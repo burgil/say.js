@@ -97,7 +97,7 @@ say.stream(text, voice || null, speed || null)
 * Speed: 1 = 100%, 0.5 = 50%, 2 = 200%, etc
 
 ```javascript
-say.streamRealTime(text, voice || null, speed || null)
+say.streamRealTime(text, voice || null, speed || null, callback || null)
 ```
 
 #### Stop Speaking:
@@ -122,6 +122,9 @@ npm install
 echo test stream:
 node ./examples/win32-stream.js
 
+echo test stream:
+node ./examples/win32-stream-real-time.js
+
 echo get voices:
 node ./examples/win32-voices.js
 
@@ -139,11 +142,11 @@ node ./examples/win32-basic-callback.js
 
 Unfortunately every feature isn't supported on every platform. PR's welcome!
 
-Platform | Speak | Export | Stop | Speed | Voice | List | Stream
----------|-------|--------|------|-------|-------|------|-------
-macOS    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
-Linux    | :white_check_mark: | :no_entry_sign:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
-Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
+Platform | Speak | Export | Stop | Speed | Voice | List | Stream | StreamRealTime
+---------|-------|--------|------|-------|-------|------|-------|----------------
+macOS    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign: | :no_entry_sign:
+Linux    | :white_check_mark: | :no_entry_sign:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign: | :no_entry_sign:
+Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
 
 
 ## Requirements
@@ -157,6 +160,8 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 ## Windows Notes
 
 Enjoy streaming!
+
+## Update 11: Working on StreamRealTime..
 
 ## Update 10: Added expressjs examples!
 
