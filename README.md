@@ -11,6 +11,61 @@ PowerShell Script: chcp 65001;Add-Type -AssemblyName System.speech;$speak = New-
 null
 ```
 
+Clearly we have an issue here:
+```ps
+After text.replace:
+$speak.Speak('I''m sorry, Dave.');
+
+Before text.replace:
+$speak.Speak('I'm sorry, Dave.');
+```
+
+Let's open up the powershell script:
+```
+chcp 65001;
+Add-Type -AssemblyName System.speech;
+$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;
+$speak.SelectVoice('Microsoft David Desktop');
+$speak.Rate = -3;
+$streamAudio = New-Object System.IO.MemoryStream;
+$speak.SetOutputToWaveStream($streamAudio);
+$speak.Speak('I''m sorry, Dave.');
+$streamAudio.Position = 0;
+$streamAudio.ToArray()
+```
+
+Now let's run it in powershell...
+
+It works!
+```PS
+PS C:\Users\Burgil> chcp 65001;
+Active code page: 65001
+PS C:\Users\Burgil> Add-Type -AssemblyName System.speech;
+PS C:\Users\Burgil> $speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;
+PS C:\Users\Burgil> $speak.SelectVoice('Microsoft David Desktop');
+PS C:\Users\Burgil> $speak.Rate = -3;
+PS C:\Users\Burgil> $streamAudio = New-Object System.IO.MemoryStream;
+PS C:\Users\Burgil> $speak.SetOutputToWaveStream($streamAudio);
+PS C:\Users\Burgil> $speak.Speak('I''m sorry, Dave.');
+PS C:\Users\Burgil> $streamAudio.Position = 0;
+PS C:\Users\Burgil> $streamAudio.ToArray()
+...
+5
+255
+0
+0
+1
+0
+253
+255
+249
+255
+254
+255
+254
+...
+```
+
 # Update 6: Stream is still not working, with the same error as update 3, trying to figure out why, debugging:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
