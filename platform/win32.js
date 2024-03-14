@@ -66,6 +66,34 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, pipedData, options }
   }
 
+  
+  buildStreamCommand({ text, voice, speed }) {
+    let args = []
+    let pipedData = ''
+    let options = {}
+
+    let psCommand = `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
+
+    if (voice) {
+      psCommand += `$speak.SelectVoice('${voice}');`
+    }
+
+    if (speed) {
+      let adjustedSpeed = this.convertSpeed(speed || 1)
+      psCommand += `$speak.Rate = ${adjustedSpeed};`
+    }
+
+    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`
+    psCommand += `$speak.Speak('${text}');`
+    psCommand += `$streamAudio.Position = 0; $streamAudio.ToArray()`
+
+    args.push(psCommand)
+    options.shell = true
+
+    return { command: COMMAND, args, pipedData, options }
+  }
+
   runStopCommand () {
     this.child.stdin.pause()
     childProcess.exec(`taskkill /pid ${this.child.pid} /T /F`)
