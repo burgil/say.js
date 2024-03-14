@@ -1,4 +1,4 @@
-const say = require('say')
+const say = require('../')
 const path = require('path')
 
 // Export spoken audio to a WAV file

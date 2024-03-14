@@ -1,4 +1,4 @@
-const say = require('../index.js')
+const say = require('../')
 
 // Export spoken audio to a stream
 async function main() {
