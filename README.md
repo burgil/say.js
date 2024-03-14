@@ -170,6 +170,8 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 ## Fork Patch Logs:
 
+### Update 14: Currently I am implementing front end and back end examples using express js for the new streaming and streaming in real time features!
+
 ### Update 13: Finished adding streamRealTime!
 
 ### Update 12: Ignored CHCP logs caused by utf8 support
