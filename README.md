@@ -83,7 +83,7 @@ say.export(text, voice || null, speed || null, filename, callback || null)
 * Speed: 1 = 100%, 0.5 = 50%, 2 = 200%, etc
 
 ```javascript
-say.strean(text, voice || null, speed || null, callback || null)
+say.stream(text, voice || null, speed || null)
 ```
 
 #### Stop Speaking:
