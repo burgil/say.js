@@ -120,6 +120,28 @@ say -v "?"
 
 As an example, the default voice is `Alex` and the voice used by Siri is `Samantha`.
 
+### Testing examples:
+
+```bash
+git clonse https://github.com/burgil/say.js/
+cd say.js
+npm install
+
+echo test stream:
+node ./examples/win32-stream.js
+
+echo get voices:
+node ./examples/win32-voices.js
+
+echo test voices:
+node ./examples/win32-allvoices.js
+
+echo export:
+node ./examples/win32-export.js
+
+echo speak:
+node ./examples/win32-basic-callback.js
+```
 
 ## Windows Notes
 
@@ -293,6 +315,7 @@ Error: Error: At line:1 char:282
 
 ## Update 1: Stream is ready for Windows BUT was not tested yet, I probably still need to pipe it, But before I start - while closing tabs I've found Google's new Speech Synthesizer, An alternative that will save the time and effort required to later add support for linux or even worry about it: https://cloud.google.com/text-to-speech - AI Lifelike speech Synthesis - They give 300$ in free credits, But I'm not so sure about it yet, depending how cheap it is, and if I even get my 300$ in credits, I might recommend you to choose it instead if you're looking for hosting it behind a dedicated server like myself, I will update here as soon as I finished testing the pricing and the speed of this new AI lifelike speech synthesis by Google
 
+
 ## Linux Notes
 
 Linux support requires [Festival](http://www.cstr.ed.ac.uk/projects/festival/). As far as I can tell there is no sane way to get a list of available voices. The only voice that seems to work is `voice_kal_diphone`, which seems to be the default anyway.
@@ -314,26 +337,3 @@ sudo apt-get install festival festvox-kallpc16k
 * Linux with Festival installed
 * Windows (comes with SAPI.SpVoice)
   * Needs to have Powershell installed and available in $PATH (see [issue #75](https://github.com/Marak/say.js/issues/75))
-
-### Testing examples:
-
-```bash
-git clonse https://github.com/burgil/say.js/
-cd say.js
-npm install
-
-echo test stream:
-node ./examples/win32-stream.js
-
-echo get voices:
-node ./examples/win32-voices.js
-
-echo test voices:
-node ./examples/win32-allvoices.js
-
-echo export:
-node ./examples/win32-export.js
-
-echo speak:
-node ./examples/win32-basic-callback.js
-```
