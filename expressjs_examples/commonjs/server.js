@@ -40,19 +40,39 @@ app.post('/tts-stream', async (req, res) => {
         // Stream spoken audio
         const spokenBuffer = await say.stream(text, voice, speed);
         
-        // Set the response headers for WAV format
+        // Encode the spoken audio buffer as base64
+        const base64Data = spokenBuffer.toString('base64');
+
+        // Set the response headers for base64 audio data
         res.set({
-            'Content-Type': 'audio/wav',
-            'Content-Disposition': 'attachment; filename="speech.wav"'
+            'Content-Type': 'text/plain'
         });
 
-        // Send the spoken audio buffer as the response
-        res.send(spokenBuffer);
+        // Send the base64-encoded audio data as the response
+        res.send(base64Data);
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'An error occurred while generating speech.' });
     }
 });
+
+// app.post('/tts-stream', async (req, res) => {
+//     const { text, voice, speed } = req.body;
+//     try {
+//         // Stream spoken audio
+//         const spokenBuffer = await say.stream(text, voice, speed);
+//         // Set the response headers for WAV format
+//         res.set({
+//             'Content-Type': 'audio/wav',
+//             'Content-Disposition': 'attachment; filename="speech.wav"'
+//         });
+//         // Send the spoken audio buffer as the response
+//         res.send(spokenBuffer);
+//     } catch (err) {
+//         console.error('Error:', err);
+//         res.status(500).json({ error: 'An error occurred while generating speech.' });
+//     }
+// });
 
 // app.post('/tts-stream', async (req, res) => {
 //     const { text, voice, speed } = req.body;
