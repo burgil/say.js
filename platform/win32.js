@@ -70,7 +70,6 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, pipedData: text, options }
   }
 
-  
   buildStreamCommand({ text, voice, speed }) {
     let args = []
     let options = {}

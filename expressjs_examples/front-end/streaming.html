@@ -1,69 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text-to-Speech - Speak.JS Stream</title>
-</head>
-<body>
-    <!-- Created by Burgil -->
-    <textarea id="textInput" placeholder="Enter text">hello world how are you doing today? I am your personal assistant</textarea><br>
-    <select id="voiceSelect"></select><br>
-    <button id="playButton">Play</button>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Text-to-Speech - Speak.JS Stream</title>
+    </head>
+    <body>
+        <!-- Created by Burgil -->
+        <textarea id="textInput" placeholder="Enter text">hello world how are you doing today? I am your personal assistant</textarea><br>
+        <select id="voiceSelect"></select><br>
+        <button id="playButton">Play</button>
 
-    <script>
-        const playButton = document.getElementById('playButton');
-        const textInput = document.getElementById('textInput');
-        const voiceSelect = document.getElementById('voiceSelect');
-        // Created by Burgil
-        fetch('http://localhost/voices').then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        }).then(voices => {
+        <script>
+            const playButton = document.getElementById('playButton');
+            const textInput = document.getElementById('textInput');
             const voiceSelect = document.getElementById('voiceSelect');
-            voiceSelect.innerHTML = '';
-            voices.forEach(voice => {
-                const option = document.createElement('option');
-                option.value = voice;
-                option.textContent = voice;
-                voiceSelect.appendChild(option);
-            });
-        }).catch(error => {
-            console.error('There was a problem fetching available voices:', error);
-        });
+            const audioContext = new AudioContext();
+            let audioBuffer;
 
-        // Created by Burgil
-
-        // Play button click event listener
-        playButton.addEventListener('click', async () => {
-            const text = textInput.value;
-            const voice = voiceSelect.value;
-            try {
-                const response = await fetch('http://localhost/tts-stream', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ text, voice })
-                });
+            // Created by Burgil
+            fetch('http://localhost/voices').then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                const audioContext = new AudioContext();
-                const audioStream = audioContext.createMediaElementSource(document.createElement('audio'));
-                audioStream.connect(audioContext.destination);
-                const audioBlob = await response.blob();
-                const audioBlobURL = URL.createObjectURL(audioBlob);
-                audioStream.mediaElement.src = audioBlobURL;
-                audioStream.mediaElement.play();
-            } catch (error) {
-                console.error('There was a problem playing audio:', error);
-            }
-        });
+                return response.json();
+            }).then(voices => {
+                const voiceSelect = document.getElementById('voiceSelect');
+                voiceSelect.innerHTML = '';
+                voices.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.value = voice;
+                    option.textContent = voice;
+                    voiceSelect.appendChild(option);
+                });
+            }).catch(error => {
+                console.error('There was a problem fetching available voices:', error);
+            });
 
-        // Created by Burgil
-    </script>
-</body>
+            // Created by Burgil
+
+            // Play button click event listener
+            playButton.addEventListener('click', async () => {
+                const text = textInput.value;
+                const voice = voiceSelect.value;
+                try {
+                    const response = await fetch('http://localhost/tts-stream', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ text, voice })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const audioData = await response.arrayBuffer();
+                    audioBuffer = await audioContext.decodeAudioData(audioData);
+                    const source = audioContext.createBufferSource();
+                    source.buffer = audioBuffer;
+                    source.connect(audioContext.destination);
+                    source.start();
+                } catch (error) {
+                    console.error('There was a problem playing audio:', error);
+                }
+            });
+
+            // Created by Burgil
+        </script>
+    </body>
 </html>

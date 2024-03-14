@@ -34,17 +34,19 @@ app.post('/tts-export', (req, res) => { // warning unless some unique uuid will 
     });
 });
 
-// Route for text-to-speech streaming
+// Route for text-to-speech streaming - slow
 app.post('/tts-stream', async (req, res) => {
     const { text, voice, speed } = req.body;
     try {
         // Stream spoken audio
         const spokenBuffer = await say.stream(text, voice, speed);
+        console.log('spokenBuffer', spokenBuffer)
         
         // Convert buffer to readable stream
         const spokenStream = new Readable();
         spokenStream.push(spokenBuffer);
         spokenStream.push(null);
+        console.log('spokenStream', spokenStream)
 
         // Set the response headers
         res.setHeader('Content-Type', 'audio/wav');
@@ -57,7 +59,7 @@ app.post('/tts-stream', async (req, res) => {
     }
 });
 
-// Route for text-to-speech streaming in real time
+// Route for text-to-speech streaming in real time - fast
 app.post('/tts-stream-real-time', async (req, res) => {
     const { text, voice, speed } = req.body;
     try {
