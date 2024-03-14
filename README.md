@@ -6,16 +6,11 @@
 npm install burgil/say.js
 ```
 
-## Installing say.js
-
-```bash
-npm install say
-```
-
 ## Express JS Examples
 Checkout the folder `expressjs_examples` on the repo root.
+https://github.com/burgil/say.js/tree/master/expressjs_examples
 
-## Usage
+## Usage (Use it like you normally would)
 
 ```javascript
 // automatically pick platform
