@@ -20,6 +20,7 @@ Error: Error: At line:1 char:282
     at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
 PS C:\Users\Burgil\Desktop\say.js> 
 ```
+Note: everything else worked, just stream didnt work
 
 # Update 1: I decided to not use text-to-speech AI as it is too expensive for my use-case, starting to test streaming on windows and later on I will add it to linux
 
