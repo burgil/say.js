@@ -7,9 +7,9 @@ import express from 'express';
 // const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
-// app.use('/files', express.static(path.join(__dirname, '..')));
+// app.use('../files', express.static(path.join(__dirname, '..')));
 // app.get('/', function (req, res) {
-//     res.sendFile(path.join(__dirname, '/index.html'));
+//     res.sendFile(path.join(__dirname, '../front-end/mp3.html'));
 // });
 app.post('/tts', (req, res) => {
     const { text, voice } = req.body;

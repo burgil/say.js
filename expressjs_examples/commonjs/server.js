@@ -5,9 +5,9 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 const port = 80;
-// app.use('/files', express.static(path.join(__dirname, '..')));
+// app.use('../files', express.static(path.join(__dirname, '..')));
 // app.get('/', function (req, res) {
-//     res.sendFile(path.join(__dirname, '/index.html'));
+//     res.sendFile(path.join(__dirname, '../front-end/mp3.html'));
 // });
 app.post('/tts', (req, res) => {
     const { text, voice } = req.body;
