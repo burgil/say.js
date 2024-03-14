@@ -314,3 +314,26 @@ sudo apt-get install festival festvox-kallpc16k
 * Linux with Festival installed
 * Windows (comes with SAPI.SpVoice)
   * Needs to have Powershell installed and available in $PATH (see [issue #75](https://github.com/Marak/say.js/issues/75))
+
+### Testing examples:
+
+```bash
+git clonse https://github.com/burgil/say.js/
+cd say.js
+npm install
+
+echo test stream:
+node ./examples/win32-stream.js
+
+echo get voices:
+node ./examples/win32-voices.js
+
+echo test voices:
+node ./examples/win32-allvoices.js
+
+echo export:
+node ./examples/win32-export.js
+
+echo speak:
+node ./examples/win32-basic-callback.js
+```
