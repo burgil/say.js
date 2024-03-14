@@ -85,7 +85,7 @@ class SayPlatformWin32 extends SayPlatformBase {
 
     psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`
     psCommand += `$speak.SetOutputToWaveStream($streamAudio);` // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavestream?view=dotnet-plat-ext-8.0
-    psCommand += `$speak.Speak('${text}');`
+    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
     psCommand += `$streamAudio.Position = 0; $streamAudio.ToArray()`
 
     console.log("PowerShell Script:", psCommand);

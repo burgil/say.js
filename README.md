@@ -1,3 +1,10 @@
+# Update 7: The issue seems to be related to the use of single quotes within the text 'I'm sorry, Dave.' in the PowerShell script. Since the PowerShell script itself is enclosed in single quotes, the presence of single quotes within the text is causing a syntax error.
+```js
+psCommand += `$speak.Speak('${text}');`
+->
+psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
+```
+
 # Update 6: Stream is still not working, with the same error as update 3, trying to figure out why, debugging:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
