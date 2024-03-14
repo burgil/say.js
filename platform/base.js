@@ -153,13 +153,13 @@ class SayPlatformBase {
       this.child.stdin.setEncoding('utf-8')
       this.child.stderr.setEncoding('utf-8')
       let audioStream = Buffer.alloc(0)
-      child.stdout.on('data', data => {
+      this.child.stdout.on('data', data => {
         audioStream = Buffer.concat([audioStream, data])
       })
-      child.stderr.on('data', data => {
+      this.child.stderr.on('data', data => {
         reject(new Error(data.toString()))
       })
-      child.on('close', code => {
+      this.child.on('close', code => {
         if (code !== 0) {
           reject(new Error(`Process exited with code ${code}`))
         } else {
