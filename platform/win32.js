@@ -88,7 +88,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
     psCommand += `$streamAudio.Position = 0; $streamAudio.ToArray()`
 
-    console.log("PowerShell Script:", psCommand);
+    // console.log("PowerShell Script:", psCommand);
 
     args.push(psCommand)
     options.shell = true

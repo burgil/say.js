@@ -154,23 +154,18 @@ class SayPlatformBase {
       this.child.stderr.setEncoding('utf-8')
       let audioStream = Buffer.alloc(0)
       this.child.stdout.on('data', data => {
+        // console.log('Output from PowerShell:', data.toString());
         audioStream = Buffer.concat([audioStream, data])
       })
       this.child.stderr.on('data', data => {
+        console.error('Error output from PowerShell:', data.toString());
         reject(new Error(data.toString()))
-      })
-      this.child.on('close', code => {
-        if (code !== 0) {
-          reject(new Error(`Process exited with code ${code}`))
-        } else {
-          resolve(audioStream)
-        }
       })
       if (pipedData) this.child.stdin.end(pipedData)
       this.child.addListener('exit', (code, signal) => {
         if (code === null || signal !== null) return reject(new Error(`say.export(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
         this.child = null
-        resolve(null)
+        resolve(audioStream)
       })
     });
   }

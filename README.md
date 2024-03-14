@@ -1,3 +1,19 @@
+# Update 8: Trying to return Uint8Array, when it works I will create an example express.js and a frontend no worries!
+
+Goal in life: Uint8Array
+
+* Debuggeed some lines
+* Removed debugging
+* Got the output to show on javascript!
+* Found the issue thanks to `// console.log('Output from PowerShell:', data.toString());`
+* resolve was null - changed to audioStream
+
+```PS
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
+<Buffer 41 63 74 69 76 65 20 63 6f 64 65 20 70 61 67 65 3a 20 36 35 30 30 31 0d 0a 38 32 0d 0a 37 33 0d 0a 37 30 0d 0a 37 30 0d 0a 31 34 30 0d 0a 33 37 0d 0a ... 511840 more bytes> 
+```
+Note: I feel like it's taking a lot of time to generate the stream.
+
 # Update 7: The issue seems to be related to the use of single quotes within the text 'I'm sorry, Dave.' in the PowerShell script. Since the PowerShell script itself is enclosed in single quotes, the presence of single quotes within the text is causing a syntax error.
 ```js
 psCommand += `$speak.Speak('${text}');`
