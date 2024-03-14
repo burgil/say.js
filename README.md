@@ -4,7 +4,7 @@ psCommand += `$speak.Speak('${text}');`
 ->
 psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
 ```
-Still getting null:
+Still getting null, but notice the error is gone:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
 PowerShell Script: chcp 65001;Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.SelectVoice('Microsoft David Desktop');$speak.Rate = -3;$streamAudio = New-Object System.IO.MemoryStream;$speak.SetOutputToWaveStream($streamAudio);$speak.Speak('I''m sorry, Dave.');$streamAudio.Position = 0; $streamAudio.ToArray()
@@ -66,6 +66,21 @@ PS C:\Users\Burgil> $streamAudio.ToArray()
 ...
 ```
 
+Let's test if the use of single quotes really was the underlying issue:
+```ps
+$speak.Speak('I'm sorry, Dave.');
+```
+
+Yes this was an issue:
+```
+> $speak.Speak('I'm sorry, Dave.');
+>>
+>>
+>> ^C
+```
+
+Let's move on to getting it to return the array now as Uint8Array or something on the javascript side.
+
 # Update 6: Stream is still not working, with the same error as update 3, trying to figure out why, debugging:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
@@ -81,6 +96,22 @@ Error: Error: At line:1 char:282
 ```
 
 # Update 5: Added stream audio buffer
+```js
+let audioStream = Buffer.alloc(0)
+this.child.stdout.on('data', data => {
+  audioStream = Buffer.concat([audioStream, data])
+})
+this.child.stderr.on('data', data => {
+  reject(new Error(data.toString()))
+})
+this.child.on('close', code => {
+  if (code !== 0) {
+    reject(new Error(`Process exited with code ${code}`))
+  } else {
+    resolve(audioStream)
+  }
+})
+```
 
 # Update 4: Stream is currently not returning any error, or anything:
 ```ps
