@@ -45,6 +45,18 @@ say.export("I'm sorry, Dave.", 'Cellos', 0.75, 'hal.wav', (err) => {
 
   console.log('Text has been saved to hal.wav.')
 })
+
+// Export spoken audio to a Stream
+async function main() {
+  const spokenStream = await say.stream("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (err) => {
+    if (err) {
+      return console.error(err)
+    }
+    console.log('Optionally run a callback when the stream is over.')
+  });
+  console.log(spokenStream) // Uint8Array
+}
+main();
 ```
 
 ### Methods
@@ -66,6 +78,15 @@ say.speak(text, voice || null, speed || null, callback || null)
 say.export(text, voice || null, speed || null, filename, callback || null)
 ```
 
+#### Stream Audio:
+
+* Windows Only
+* Speed: 1 = 100%, 0.5 = 50%, 2 = 200%, etc
+
+```javascript
+say.strean(text, voice || null, speed || null, callback || null)
+```
+
 #### Stop Speaking:
 
 ```javascript
@@ -82,11 +103,11 @@ say.getInstalledVoices(callback)
 
 Unfortunately every feature isn't supported on every platform. PR's welcome!
 
-Platform | Speak | Export | Stop | Speed | Voice | List
----------|-------|--------|------|-------|-------|-----
-macOS    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign:
-Linux    | :white_check_mark: | :no_entry_sign:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign:
-Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
+Platform | Speak | Export | Stop | Speed | Voice | List | Stream
+---------|-------|--------|------|-------|-------|------|-------
+macOS    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
+Linux    | :white_check_mark: | :no_entry_sign:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
+Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
 
 
 ## macOS Notes
@@ -102,13 +123,15 @@ As an example, the default voice is `Alex` and the voice used by Siri is `Samant
 
 ## Windows Notes
 
-None.
+Streaming was never tested before.
 
 ## Linux Notes
 
 Linux support requires [Festival](http://www.cstr.ed.ac.uk/projects/festival/). As far as I can tell there is no sane way to get a list of available voices. The only voice that seems to work is `voice_kal_diphone`, which seems to be the default anyway.
 
 The `.export()` method is not available.
+
+The `.stream()` method is not (yet) available.
 
 Try the following command to install Festival with a default voice:
 
