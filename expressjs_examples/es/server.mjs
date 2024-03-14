@@ -28,6 +28,12 @@ app.post('/tts-export', (req, res) => { // warning unless some unique uuid will 
     });
 });
 
+app.post('/tts-stream', (req, res) => {
+});
+
+app.post('/tts-stream-in-real-time', (req, res) => {
+});
+
 app.get('/voices', async function (req, res) {
     say.getInstalledVoices((err, voices) => {
         if (err) {

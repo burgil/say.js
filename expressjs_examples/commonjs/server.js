@@ -35,6 +35,12 @@ app.get('/voices', async function (req, res) {
     });
 });
 
+app.post('/tts-stream', (req, res) => {
+});
+
+app.post('/tts-stream-in-real-time', (req, res) => {
+});
+
 const port = 80;
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
