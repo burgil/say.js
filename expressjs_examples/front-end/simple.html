@@ -6,6 +6,7 @@
     <title>Text-to-Speech - Speak.JS Export</title>
   </head>
   <body>
+    <!-- Created by Burgil -->
     <textarea id="textInput" placeholder="Enter text">hello world how are you doing today? I am your personal assistant</textarea><br>
     <select id="voiceSelect"></select><br>
     <button id="playButton">Play</button>
@@ -19,6 +20,7 @@
       const audioPlayer = document.getElementById('audioPlayer');
       const textInput = document.getElementById('textInput');
       const voiceSelect = document.getElementById('voiceSelect');
+      // Created by Burgil
       fetch('/voices').then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -37,6 +39,7 @@
         console.error('There was a problem fetching available voices:', error);
       });
 
+      // Created by Burgil
       playButton.addEventListener('click', () => {
         const text = textInput.value;
         const voice = voiceSelect.value;
@@ -58,6 +61,7 @@
         })
       });
 
+      // Created by Burgil
       stopButton.addEventListener('click', () => {
         audioPlayer.pause();
         audioPlayer.currentTime = 0;

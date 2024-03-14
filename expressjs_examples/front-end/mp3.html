@@ -34,6 +34,7 @@
         </style>
     </head>
     <body>
+        <!-- Created by Burgil -->
         <button id="play">Play</button>
         <div id="currentDb">Current Decibel Level: <span id="dbValue"></span> dB</div>
         <div id="gauge">
@@ -47,6 +48,7 @@
             (function () {
                 'use strict';
 
+                // Created by Burgil
                 const URL = '/files/test.mp3'; // Requires a running web server - Can be a full URL or relative URL
                 const playButton = document.querySelector('#play');
                 const dbValueElement = document.querySelector('#dbValue');
@@ -60,6 +62,7 @@
 
                 playButton.onclick = () => play();
 
+                // Created by Burgil
                 async function play() {
                     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const response = await window.fetch(URL);
@@ -82,6 +85,7 @@
                     analyser.connect(audioContext.destination);
                     source.start();
 
+                    // Created by Burgil
                     function updateDecibel() {
                         analyser.getByteFrequencyData(dataArray);
                         const sum = dataArray.reduce((acc, cur) => acc + cur, 0);
@@ -110,6 +114,7 @@
                     updateDecibel();
                 }
 
+                // Created by Burgil
                 function drawWaveform(dataArray, bufferLength) {
                     waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
                     waveformCtx.beginPath();
@@ -130,6 +135,7 @@
                     waveformCtx.stroke();
                 }
 
+                // Created by Burgil
                 function drawCircularWaveform(dataArray, bufferLength, offset = 130) {
                     const centerX = waveformRoundCanvas.width / 2;
                     const centerY = waveformRoundCanvas.height / 2;
@@ -168,7 +174,7 @@
                     // waveformRoundCtx.stroke();
                 }
 
-                function drawOscilloscope(dataArray, bufferLength) {
+                function drawOscilloscope(dataArray, bufferLength) { // Almost untouched, self constructed - Original source is Mozilla Docs: https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API
                     waveformNormalCtx.fillStyle = "rgb(255 255 255)";
                     waveformNormalCtx.fillRect(0, 0, waveformNormalCanvas.width, waveformNormalCanvas.height);
                     waveformNormalCtx.lineWidth = 2;

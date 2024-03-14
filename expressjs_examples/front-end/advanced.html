@@ -34,6 +34,7 @@
     </style>
   </head>
   <body>
+    <!-- Created by Burgil -->
     <textarea id="textInput" placeholder="Enter text">hello world how are you doing today? I am your personal assistant</textarea><br>
     <select id="voiceSelect"></select><br>
     <button id="playButton">Play</button>
@@ -53,6 +54,7 @@
       (function () {
         'use strict';
 
+        // Created by Burgil
         const playButton = document.getElementById('playButton');
         const stopButton = document.getElementById('stopButton');
         // const audioPlayer = document.getElementById('audioPlayer');
@@ -69,6 +71,7 @@
 
         playButton.onclick = () => play();
 
+        // Created by Burgil
         fetch('/voices').then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -87,6 +90,7 @@
           console.error('There was a problem fetching available voices:', error);
         });
 
+        // Created by Burgil
         async function play() {
           const text = textInput.value;
           const voice = voiceSelect.value;
@@ -129,6 +133,7 @@
           // Update decibel levels and visualization
           updateDecibel();
 
+          // Created by Burgil
           function updateDecibel() {
             analyser.getByteFrequencyData(dataArray);
             const sum = dataArray.reduce((acc, cur) => acc + cur, 0);
@@ -146,6 +151,7 @@
           }
         }
 
+        // Created by Burgil
         function drawWaveform(dataArray, bufferLength) {
           waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
           waveformCtx.beginPath();
@@ -166,6 +172,7 @@
           waveformCtx.stroke();
         }
 
+        // Created by Burgil
         function drawCircularWaveform(dataArray, bufferLength, offset = 130) {
           const centerX = waveformRoundCanvas.width / 2;
           const centerY = waveformRoundCanvas.height / 2;
@@ -191,7 +198,7 @@
           }
         }
 
-        function drawOscilloscope(dataArray, bufferLength) {
+        function drawOscilloscope(dataArray, bufferLength) { // Almost untouched, self constructed - Original source is Mozilla Docs: https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API
           waveformNormalCtx.fillStyle = "rgb(255 255 255)";
           waveformNormalCtx.fillRect(0, 0, waveformNormalCanvas.width, waveformNormalCanvas.height);
           waveformNormalCtx.lineWidth = 2;
