@@ -48,13 +48,12 @@ say.export("I'm sorry, Dave.", 'Cellos', 0.75, 'hal.wav', (err) => {
 
 // Export spoken audio to a Stream
 async function main() {
-  const spokenStream = await say.stream("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (err) => {
-    if (err) {
-      return console.error(err)
-    }
-    console.log('Optionally run a callback when the stream is over.')
-  });
-  console.log(spokenStream) // Uint8Array
+  try {
+    const spokenStream = await say.stream("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75);
+    console.log(spokenStream) // Uint8Array
+  } catch (e) {
+    console.error("Error:", e)
+  }
 }
 main();
 ```

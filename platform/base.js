@@ -122,52 +122,32 @@ class SayPlatformBase {
    * @param {string} text Text to be spoken
    * @param {string|null} voice Name of voice to be spoken with
    * @param {number|null} speed Speed of text (e.g. 1.0 for normal, 0.5 half, 2.0 double)
-   * @param {Function|null} callback A callback of type function(err) to return.
    */
-  stream (text, voice, speed, callback) {
-    if (typeof callback !== 'function') {
-      callback = () => {}
-    }
-
-    callback = once(callback)
-
-    if (!text) {
-      return setImmediate(() => {
-        callback(new TypeError('say.stream(): must provide text parameter'))
-      })
-    }
-
-    try {
-      var { command, args, pipedData, options } = this.buildStreamCommand({ text, voice, speed })
-    } catch (error) {
-      return setImmediate(() => {
-        callback(error)
-      })
-    }
-
-    this.child = childProcess.spawn(command, args, options)
-
-    this.child.stdin.setEncoding('utf-8')
-    this.child.stderr.setEncoding('utf-8')
-
-    if (pipedData) {
-      this.child.stdin.end(pipedData)
-    }
-
-    this.child.stderr.once('data', (data) => {
-      // we can't stop execution from this function
-      callback(new Error(data))
-    })
-
-    this.child.addListener('exit', (code, signal) => {
-      if (code === null || signal !== null) {
-        return callback(new Error(`say.export(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
+  stream (text, voice, speed) {
+    return new Promise((resolve, reject) => {
+      if (!text) {
+        reject(new TypeError('say.stream(): must provide text parameter'))
+        return
       }
-
-      this.child = null
-
-      callback(null)
-    })
+      try {
+        var { command, args, pipedData, options } = this.buildStreamCommand({ text, voice, speed })
+      } catch (error) {
+        reject(error)
+        return
+      }
+      this.child = childProcess.spawn(command, args, options)
+      this.child.stdin.setEncoding('utf-8')
+      this.child.stderr.setEncoding('utf-8')
+      if (pipedData) this.child.stdin.end(pipedData)
+      this.child.stderr.once('data', (data) => {
+        reject(new Error(data))
+      })
+      this.child.addListener('exit', (code, signal) => {
+        if (code === null || signal !== null) return reject(new Error(`say.export(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
+        this.child = null
+        resolve(null)
+      })
+    });
   }
 
   /**
