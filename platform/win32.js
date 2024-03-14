@@ -15,7 +15,8 @@ class SayPlatformWin32 extends SayPlatformBase {
     let args = []
     let options = {}
 
-    let psCommand = `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
+    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
 
     if (voice) {
       psCommand += `$speak.SelectVoice('${voice}');`
@@ -38,7 +39,8 @@ class SayPlatformWin32 extends SayPlatformBase {
     let args = []
     let options = {}
 
-    let psCommand = `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
+    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
 
     if (voice) {
       psCommand += `$speak.SelectVoice('${voice}');`
@@ -67,7 +69,8 @@ class SayPlatformWin32 extends SayPlatformBase {
     let args = []
     let options = {}
 
-    let psCommand = `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
+    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
 
     if (voice) {
       psCommand += `$speak.SelectVoice('${voice}');`
@@ -101,7 +104,8 @@ class SayPlatformWin32 extends SayPlatformBase {
 
   getVoices () {
     let args = []
-    let psCommand = 'Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.GetInstalledVoices() | % {$_.VoiceInfo.Name}'
+    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
+    psCommand += 'Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.GetInstalledVoices() | % {$_.VoiceInfo.Name}'
     args.push(psCommand)
     return { command: COMMAND, args }
   }
