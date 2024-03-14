@@ -181,19 +181,15 @@ class SayPlatformBase {
    * @param {string|null} voice Name of voice to be spoken with
    * @param {number|null} speed Speed of text (e.g. 1.0 for normal, 0.5 half, 2.0 double)
    * @param {Function|null} data_callback A callback of type function to return data.
+   * @param {Function|null} finish_callback A callback of type function to return all the data.
    * @param {Function|null} error_callback A callback of type function(err) to return.
    */
-  streamRealTime (text, voice, speed, data_callback, error_callback) {
-    if (typeof data_callback !== 'function') {
-      data_callback = () => {}
-    }
-    
-    if (typeof error_callback !== 'function') {
-      error_callback = () => {}
-    }
-
-    error_callback = once(error_callback)
-
+  streamRealTime (text, voice, speed, data_callback, finish_callback, error_callback) {
+    if (typeof data_callback !== 'function') data_callback = () => {};
+    if (typeof finish_callback !== 'function') finish_callback = () => {};
+    finish_callback = once(finish_callback);
+    if (typeof error_callback !== 'function') error_callback = () => {};
+    error_callback = once(error_callback);
     if (!text) {
       return setImmediate(() => {
         error_callback(new TypeError('say.streamRealTime(): must provide text parameter'))
@@ -213,12 +209,14 @@ class SayPlatformBase {
     this.child = childProcess.spawn(command, args, options)
     this.child.stdin.setEncoding('utf-8')
     this.child.stderr.setEncoding('utf-8')
+    let audioStream = Buffer.alloc(0);
     let ignoreCHCP = true;
     this.child.stdout.on('data', data => {
       if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
         if (ignoreCHCP) ignoreCHCP = false;
         // console.log('Output from PowerShell:', data.toString());
         data_callback(data);
+        audioStream = Buffer.concat([audioStream, data])
       }
     })
     this.child.stderr.on('data', data => {
@@ -229,6 +227,7 @@ class SayPlatformBase {
     this.child.addListener('exit', (code, signal) => {
       if (code === null || signal !== null) return reject(new Error(`say.streamRealTime(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
       this.child = null
+      finish_callback(audioStream)
     })
   }
 

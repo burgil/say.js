@@ -59,10 +59,12 @@ async function main() {
 main();
 
 // Stream spoken audio in real time
-const audioStream = Buffer.alloc(0);
+let audioStream = Buffer.alloc(0);
 say.streamRealTime("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (data) => {
     console.log(data)
     audioStream = Buffer.concat([audioStream, data])
+}, (finalStream) => {
+    console.log("Finished!")
 }, (err) => {
     console.error(err)
 });
@@ -106,7 +108,7 @@ say.stream(text, voice || null, speed || null)
 * Speed: 1 = 100%, 0.5 = 50%, 2 = 200%, etc
 
 ```javascript
-say.streamRealTime(text, voice || null, speed || null, data_callback || null, error_callback || null)
+say.streamRealTime(text, voice || null, speed || null, data_callback || null, finish_callback || null, error_callback || null)
 ```
 
 #### Stop Speaking:
