@@ -290,7 +290,7 @@ As an example, the default voice is `Alex` and the voice used by Siri is `Samant
 
 ## Windows Notes
 
-Streaming was never tested before.
+Enjoy streaming!
 
 ## Linux Notes
 
