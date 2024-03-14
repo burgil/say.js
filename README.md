@@ -1,4 +1,4 @@
-#### Modified to support streaming and all open pull requests has been merged manually one by one - TTS (text to speech) for node.js. send text from node.js to your speakers (or clients using express.js). Join the discussions:
+#### Modified to support streaming and all open pull requests has been merged manually one by one - TTS (text to speech) for node.js. send text from node.js to your speakers (or clients using express.js). Join the discussions: https://github.com/burgil/say.js/discussions/1
 
 ### More info about this fork can be found on this comment: https://github.com/Marak/say.js/issues/123#issuecomment-1996546069
 
