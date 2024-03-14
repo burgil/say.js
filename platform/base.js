@@ -235,7 +235,11 @@ class SayPlatformBase {
         voices = (voices[voices.length - 1] === '') ? voices.slice(0, voices.length - 1) : voices
       }
       this.child = null
-
+      const tmp_voices = [];
+      for (const voice of voices) {
+        if (voice !== 'Active code page: 65001') tmp_voices.push(voice); // UTF8 Support
+      }
+      voices = tmp_voices;
       callback(null, voices)
     })
 
