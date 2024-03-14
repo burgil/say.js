@@ -167,11 +167,71 @@ class SayPlatformBase {
       })
       if (pipedData) this.child.stdin.end(pipedData)
       this.child.addListener('exit', (code, signal) => {
-        if (code === null || signal !== null) return reject(new Error(`say.export(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
+        if (code === null || signal !== null) return reject(new Error(`say.stream(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
         this.child = null
         resolve(audioStream)
       })
     });
+  }
+
+  /**
+   * Uses system libraries to speak text via the speakers and stream it back in real time.
+   *
+   * @param {string} text Text to be spoken
+   * @param {string|null} voice Name of voice to be spoken with
+   * @param {number|null} speed Speed of text (e.g. 1.0 for normal, 0.5 half, 2.0 double)
+   * @param {Function|null} data_callback A callback of type function to return data.
+   * @param {Function|null} error_callback A callback of type function(err) to return.
+   */
+  streamRealTime (text, voice, speed, data_callback, error_callback) {
+    if (typeof data_callback !== 'function') {
+      data_callback = () => {}
+    }
+
+    data_callback = once(data_callback)
+    
+    if (typeof error_callback !== 'function') {
+      error_callback = () => {}
+    }
+
+    error_callback = once(error_callback)
+
+    if (!text) {
+      return setImmediate(() => {
+        error_callback(new TypeError('say.streamRealTime(): must provide text parameter'))
+      })
+    }
+    try {
+      var { command, args, pipedData, options } = this.buildStreamCommand({
+        text: symbolTTS(text),
+        voice,
+        speed
+      })
+    } catch (error) {
+      return setImmediate(() => {
+        error_callback(error)
+      })
+    }
+    this.child = childProcess.spawn(command, args, options)
+    this.child.stdin.setEncoding('utf-8')
+    this.child.stderr.setEncoding('utf-8')
+    let ignoreCHCP = true;
+    this.child.stdout.on('data', data => {
+      if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
+        if (ignoreCHCP) ignoreCHCP = false;
+        // console.log('Output from PowerShell:', data.toString());
+        data_callback(data);
+      }
+    })
+    this.child.stderr.on('data', data => {
+      console.error('Error output from PowerShell:', data.toString());
+      error_callback(new Error(data.toString()))
+    })
+    if (pipedData) this.child.stdin.end(pipedData)
+    this.child.addListener('exit', (code, signal) => {
+      if (code === null || signal !== null) return reject(new Error(`say.streamRealTime(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
+      this.child = null
+    })
   }
 
   /**
