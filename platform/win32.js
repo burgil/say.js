@@ -13,7 +13,6 @@ class SayPlatformWin32 extends SayPlatformBase {
 
   buildSpeakCommand ({ text, voice, speed }) {
     let args = []
-    let pipedData = ''
     let options = {}
 
     let psCommand = `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
@@ -29,16 +28,14 @@ class SayPlatformWin32 extends SayPlatformBase {
 
     psCommand += `$speak.Speak([Console]::In.ReadToEnd())`
 
-    pipedData += text
     args.push(psCommand)
     options.shell = true
 
-    return { command: COMMAND, args, pipedData, options }
+    return { command: COMMAND, args, pipedData: text, options }
   }
 
   buildExportCommand ({ text, voice, speed, filename }) {
     let args = []
-    let pipedData = ''
     let options = {}
 
     let psCommand = `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
@@ -59,17 +56,15 @@ class SayPlatformWin32 extends SayPlatformBase {
 
     psCommand += `$speak.Speak([Console]::In.ReadToEnd());$speak.Dispose()`
 
-    pipedData += text
     args.push(psCommand)
     options.shell = true
 
-    return { command: COMMAND, args, pipedData, options }
+    return { command: COMMAND, args, pipedData: text, options }
   }
 
   
   buildStreamCommand({ text, voice, speed }) {
     let args = []
-    let pipedData = ''
     let options = {}
 
     let psCommand = `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
@@ -91,7 +86,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     args.push(psCommand)
     options.shell = true
 
-    return { command: COMMAND, args, pipedData, options }
+    return { command: COMMAND, args, pipedData: text, options }
   }
 
   runStopCommand () {
