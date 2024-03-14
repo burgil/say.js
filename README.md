@@ -122,7 +122,7 @@ npm install
 echo test stream:
 node ./examples/win32-stream.js
 
-echo test stream:
+echo test streaming in real time:
 node ./examples/win32-stream-real-time.js
 
 echo get voices:
@@ -161,7 +161,7 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 Enjoy streaming!
 
-## Update 11: Working on StreamRealTime..
+## Update 11: Working on stream in real time..
 
 ## Update 10: Added expressjs examples!
 
