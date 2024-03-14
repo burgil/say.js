@@ -31,6 +31,8 @@ class SayPlatformWin32 extends SayPlatformBase {
 
     psCommand += `$speak.Speak([Console]::In.ReadToEnd())`
 
+    // console.log("PowerShell Script:", psCommand);
+
     args.push(psCommand)
     options.shell = true
 
@@ -60,6 +62,8 @@ class SayPlatformWin32 extends SayPlatformBase {
 
     psCommand += `$speak.Speak([Console]::In.ReadToEnd());$speak.Dispose()`
 
+    // console.log("PowerShell Script:", psCommand);
+
     args.push(psCommand)
     options.shell = true
 
@@ -68,6 +72,35 @@ class SayPlatformWin32 extends SayPlatformBase {
 
   
   buildStreamCommand({ text, voice, speed }) {
+    let args = []
+    let options = {}
+
+    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
+
+    if (voice) {
+      psCommand += `$speak.SelectVoice('${voice}');`
+    }
+
+    if (speed) {
+      let adjustedSpeed = this.convertSpeed(speed || 1)
+      psCommand += `$speak.Rate = ${adjustedSpeed};`
+    }
+
+    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);` // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavestream?view=dotnet-plat-ext-8.0
+    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
+    psCommand += `$streamAudio.Position = 0; $streamAudio.ToArray()`
+
+    // console.log("PowerShell Script:", psCommand);
+
+    args.push(psCommand)
+    options.shell = true
+
+    return { command: COMMAND, args, pipedData: text, options }
+  }
+
+  buildStreamRealTimeCommand ({ text, voice, speed }) {
     let args = []
     let options = {}
 
@@ -110,6 +143,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     let args = []
     let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
     psCommand += 'Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.GetInstalledVoices() | % {$_.VoiceInfo.Name}'
+    // console.log("PowerShell Script:", psCommand);
     args.push(psCommand)
     return { command: COMMAND, args }
   }
