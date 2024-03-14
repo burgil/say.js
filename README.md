@@ -4,6 +4,7 @@ psCommand += `$speak.Speak('${text}');`
 ->
 psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
 ```
+Still getting null:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
 PowerShell Script: chcp 65001;Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.SelectVoice('Microsoft David Desktop');$speak.Rate = -3;$streamAudio = New-Object System.IO.MemoryStream;$speak.SetOutputToWaveStream($streamAudio);$speak.Speak('I''m sorry, Dave.');$streamAudio.Position = 0; $streamAudio.ToArray()
