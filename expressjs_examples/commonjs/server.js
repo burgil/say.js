@@ -41,29 +41,50 @@ app.post('/tts-stream', async (req, res) => {
         const spokenBuffer = await say.stream(text, voice, speed);
         
         // Convert buffer to readable stream
-        const spokenStream = new PassThrough();
-        spokenStream.end(spokenBuffer);
-
-        // Create a WAV encoder stream
-        const wavEncoder = new wav.Writer({
-            sampleRate: 16000,  // Adjust sample rate if needed
-            channels: 1,        // Adjust number of channels if needed
-            bitDepth: 16        // Adjust bit depth if needed
-        });
-
-        // Pipe the spoken stream to the WAV encoder
-        spokenStream.pipe(wavEncoder);
+        const spokenStream = new Readable();
+        spokenStream.push(spokenBuffer);
+        spokenStream.push(null);
 
         // Set the response headers
         res.setHeader('Content-Type', 'audio/wav');
 
-        // Pipe the WAV encoder to the response
-        wavEncoder.pipe(res);
+        // Pipe the spoken stream to the response
+        spokenStream.pipe(res);
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'An error occurred while generating speech.' });
     }
 });
+// app.post('/tts-stream', async (req, res) => {
+//     const { text, voice, speed } = req.body;
+//     try {
+//         // Stream spoken audio
+//         const spokenBuffer = await say.stream(text, voice, speed);
+        
+//         // Convert buffer to readable stream
+//         const spokenStream = new PassThrough();
+//         spokenStream.end(spokenBuffer);
+
+//         // Create a WAV encoder stream
+//         const wavEncoder = new wav.Writer({
+//             sampleRate: 16000,  // Adjust sample rate if needed
+//             channels: 1,        // Adjust number of channels if needed
+//             bitDepth: 16        // Adjust bit depth if needed
+//         });
+
+//         // Pipe the spoken stream to the WAV encoder
+//         spokenStream.pipe(wavEncoder);
+
+//         // Set the response headers
+//         res.setHeader('Content-Type', 'audio/wav');
+
+//         // Pipe the WAV encoder to the response
+//         wavEncoder.pipe(res);
+//     } catch (err) {
+//         console.error('Error:', err);
+//         res.status(500).json({ error: 'An error occurred while generating speech.' });
+//     }
+// });
 
 // Route for text-to-speech streaming in real time - fast
 app.post('/tts-stream-real-time', async (req, res) => {
