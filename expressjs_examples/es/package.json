@@ -1,0 +1,17 @@
+{
+  "name": "expressjs_examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "github.com/burgil",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.3",
+    "say": "github:burgil/say.js"
+  }
+}

@@ -2,14 +2,13 @@
   "name": "expressjs_examples",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "commonjs": "node commonjs\\server.js",
-    "es": "node es\\server.js"
+    "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "github.com/burgil",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.3",
     "say": "github:burgil/say.js"
