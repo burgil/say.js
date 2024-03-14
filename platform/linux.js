@@ -29,6 +29,10 @@ class SayPlatformLinux extends SayPlatformBase {
     return { command: COMMAND, args, pipedData, options }
   }
 
+  buildStreamCommand ({ text, voice, speed }) {
+    throw new Error(`say.stream(): does not support platform ${this.platform}`)
+  }
+
   buildExportCommand ({ text, voice, speed, filename }) {
     throw new Error(`say.export(): does not support platform ${this.platform}`)
   }
