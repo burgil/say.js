@@ -1,3 +1,9 @@
+# Update 3: Stream is currently not returning any error, or anything:
+```ps
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
+null
+```
+
 # Update 2: First test failed:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/basic-callback.js
