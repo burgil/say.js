@@ -40,28 +40,34 @@
             });
 
             // Created by Burgil
-            playButton.addEventListener('click', () => {
+
+            // Play button click event listener
+            playButton.addEventListener('click', async () => {
                 const text = textInput.value;
                 const voice = voiceSelect.value;
-                fetch('http://localhost/tts-export', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ text, voice })
-                }).then(response => {
+                try {
+                    const response = await fetch('http://localhost/tts-stream', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ text, voice })
+                    });
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.blob();
-                }).then(blob => {
-                    const blobURL = URL.createObjectURL(blob);
-                    audioPlayer.src = blobURL;
+                    const audioStream = await response.blob();
+                    const audioBlobURL = URL.createObjectURL(audioStream);
+                    audioPlayer.src = audioBlobURL;
                     audioPlayer.play();
-                })
+                } catch (error) {
+                    console.error('There was a problem playing audio:', error);
+                }
             });
 
             // Created by Burgil
+
+            // Stop button click event listener
             stopButton.addEventListener('click', () => {
                 audioPlayer.pause();
                 audioPlayer.currentTime = 0;
