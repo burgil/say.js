@@ -72,7 +72,7 @@
         playButton.onclick = () => play();
 
         // Created by Burgil
-        fetch('/voices').then(response => {
+        fetch('http://localhost/voices').then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -96,7 +96,7 @@
           const voice = voiceSelect.value;
 
           // Send a POST request to the TTS API
-          const ttsResponse = await fetch('/tts-export', {
+          const ttsResponse = await fetch('http://localhost/tts-export', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
