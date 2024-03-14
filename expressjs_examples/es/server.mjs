@@ -40,13 +40,11 @@ app.post('/tts-stream', async (req, res) => {
     try {
         // Stream spoken audio
         const spokenBuffer = await say.stream(text, voice, speed);
-        console.log('spokenBuffer', spokenBuffer)
         
         // Convert buffer to readable stream
         const spokenStream = new Readable();
         spokenStream.push(spokenBuffer);
         spokenStream.push(null);
-        console.log('spokenStream', spokenStream)
 
         // Set the response headers
         res.setHeader('Content-Type', 'audio/wav');

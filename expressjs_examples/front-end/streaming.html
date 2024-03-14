@@ -15,8 +15,6 @@
             const playButton = document.getElementById('playButton');
             const textInput = document.getElementById('textInput');
             const voiceSelect = document.getElementById('voiceSelect');
-            const audioContext = new AudioContext();
-            let audioBuffer;
 
             // Created by Burgil
             fetch('http://localhost/voices').then(response => {
@@ -54,7 +52,10 @@
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
+                    const audioContext = new AudioContext();
+                    let audioBuffer;
                     const audioData = await response.arrayBuffer();
+                    console.log('audioData', audioData)
                     audioBuffer = await audioContext.decodeAudioData(audioData);
                     const source = audioContext.createBufferSource();
                     source.buffer = audioBuffer;
