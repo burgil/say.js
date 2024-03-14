@@ -168,16 +168,17 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 ## Fork Patch Logs:
 
+### Update 13: Finished adding streamRealTime!
 
-## Update 12: Ignored CHCP logs caused by utf8 support
+### Update 12: Ignored CHCP logs caused by utf8 support
 
-## Update 11: Working on streaming in real time..
+### Update 11: Working on streaming in real time..
 
-## Update 10: Added expressjs examples!
+### Update 10: Added expressjs examples!
 
-## Update 9: Ok so it works, But it's kind of slow, And it returns a buffer not a Uint8Array, I wonder how that will affect us later on, And I found a way to make it faster! I will add another function now called streamRealTime and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
+### Update 9: Ok so it works, But it's kind of slow, And it returns a buffer not a Uint8Array, I wonder how that will affect us later on, And I found a way to make it faster! I will add another function now called streamRealTime and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
 
-## Update 8: Trying to return Uint8Array, when it works I will create an example express.js and a frontend no worries!
+### Update 8: Trying to return Uint8Array, when it works I will create an example express.js and a frontend no worries!
 
 Goal in life: Uint8Array
 
@@ -193,7 +194,7 @@ PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
 ```
 Note: I feel like it's taking a lot of time to generate the stream.
 
-## Update 7: The issue seems to be related to the use of single quotes within the text 'I'm sorry, Dave.' in the PowerShell script. Since the PowerShell script itself is enclosed in single quotes, the presence of single quotes within the text is causing a syntax error.
+### Update 7: The issue seems to be related to the use of single quotes within the text 'I'm sorry, Dave.' in the PowerShell script. Since the PowerShell script itself is enclosed in single quotes, the presence of single quotes within the text is causing a syntax error.
 ```js
 psCommand += `$speak.Speak('${text}');`
 ->
@@ -260,7 +261,7 @@ PS C:\Users\Burgil> $streamAudio.ToArray()
 ...
 ```
 
-# It works!
+### It works!
 
 Let's test if the use of single quotes really was the underlying issue:
 ```ps
@@ -277,7 +278,7 @@ Yes this was an issue:
 
 Let's move on to getting it to return the array now as Uint8Array or something on the javascript side.
 
-## Update 6: Stream is still not working, with the same error as update 3, trying to figure out why, debugging:
+### Update 6: Stream is still not working, with the same error as update 3, trying to figure out why, debugging:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
 PowerShell Script: chcp 65001;Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.SelectVoice('Microsoft David Desktop');$speak.Rate = -3;$streamAudio = New-Object System.IO.MemoryStream;$speak.SetOutputToWaveStream($streamAudio);$speak.Speak('I'm sorry, Dave.');$streamAudio.Position = 0; $streamAudio.ToArray()
@@ -291,7 +292,7 @@ Error: Error: At line:1 char:282
     at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
 ```
 
-## Update 5: Added stream audio buffer
+### Update 5: Added stream audio buffer
 ```js
 let audioStream = Buffer.alloc(0)
 this.child.stdout.on('data', data => {
@@ -309,13 +310,13 @@ this.child.on('close', code => {
 })
 ```
 
-## Update 4: Stream is currently not returning any error, or anything:
+### Update 4: Stream is currently not returning any error, or anything:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
 null
 ```
 
-## Update 3: First test failed, everything worked but stream.
+### Update 3: First test failed, everything worked but stream.
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/basic-callback.js
 about to speak...
@@ -337,9 +338,9 @@ Error: Error: At line:1 char:282
     at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
 ```
 
-## Update 2: I decided to not use text-to-speech AI as it is too expensive for my use-case, starting to test streaming on windows and later on I will add it to linux
+### Update 2: I decided to not use text-to-speech AI as it is too expensive for my use-case, starting to test streaming on windows and later on I will add it to linux
 
-## Update 1: Stream is ready for Windows BUT was not tested yet, I probably still need to pipe it, But before I start - while closing tabs I've found Google's new Speech Synthesizer, An alternative that will save the time and effort required to later add support for linux or even worry about it: https://cloud.google.com/text-to-speech - AI Lifelike speech Synthesis - They give 300$ in free credits, But I'm not so sure about it yet, depending how cheap it is, and if I even get my 300$ in credits, I might recommend you to choose it instead if you're looking for hosting it behind a dedicated server like myself, I will update here as soon as I finished testing the pricing and the speed of this new AI lifelike speech synthesis by Google
+### Update 1: Stream is ready for Windows BUT was not tested yet, I probably still need to pipe it, But before I start - while closing tabs I've found Google's new Speech Synthesizer, An alternative that will save the time and effort required to later add support for linux or even worry about it: https://cloud.google.com/text-to-speech - AI Lifelike speech Synthesis - They give 300$ in free credits, But I'm not so sure about it yet, depending how cheap it is, and if I even get my 300$ in credits, I might recommend you to choose it instead if you're looking for hosting it behind a dedicated server like myself, I will update here as soon as I finished testing the pricing and the speed of this new AI lifelike speech synthesis by Google
 
 
 ## Windows Notes
