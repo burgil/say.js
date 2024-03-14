@@ -48,7 +48,10 @@ app.post('/tts-stream', async (req, res) => {
         spokenStream.push(null);
 
         // Set the response headers
-        res.setHeader('Content-Type', 'audio/wav');
+        res.set({
+            'Content-Type': 'audio/wav',
+            'Content-Disposition': 'attachment; filename="speech.wav"'
+        });
 
         // Pipe the spoken stream to the response
         spokenStream.pipe(res);
