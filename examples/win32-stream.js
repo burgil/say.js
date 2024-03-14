@@ -8,7 +8,7 @@ async function main() {
     }
     console.log('Optionally run a callback when the stream is over.')
   });
-  console.log(spokenStream) // 
+  console.log(spokenStream) // Uint8Array
 }
 main();
 
