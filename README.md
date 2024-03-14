@@ -1,174 +1,12 @@
-More info about this fork can be found on this comment: https://github.com/Marak/say.js/issues/123#issuecomment-1996546069
-
-# Update 9: Ok so it works, But it's kind of slow, And it returns a buffer not a Uint8Array, I wonder how that will affect us later on, And I found a way to make it faster! I will add another function now called streamInRealTime and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
-
-# Update 8: Trying to return Uint8Array, when it works I will create an example express.js and a frontend no worries!
-
-Goal in life: Uint8Array
-
-* Debuggeed some lines
-* Removed debugging
-* Got the output to show on javascript!
-* Found the issue thanks to `// console.log('Output from PowerShell:', data.toString());`
-* resolve was null - changed to audioStream
-
-```PS
-PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
-<Buffer 41 63 74 69 76 65 20 63 6f 64 65 20 70 61 67 65 3a 20 36 35 30 30 31 0d 0a 38 32 0d 0a 37 33 0d 0a 37 30 0d 0a 37 30 0d 0a 31 34 30 0d 0a 33 37 0d 0a ... 511840 more bytes> 
-```
-Note: I feel like it's taking a lot of time to generate the stream.
-
-# Update 7: The issue seems to be related to the use of single quotes within the text 'I'm sorry, Dave.' in the PowerShell script. Since the PowerShell script itself is enclosed in single quotes, the presence of single quotes within the text is causing a syntax error.
-```js
-psCommand += `$speak.Speak('${text}');`
-->
-psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
-```
-Still getting null, but notice the error is gone:
-```ps
-PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
-PowerShell Script: chcp 65001;Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.SelectVoice('Microsoft David Desktop');$speak.Rate = -3;$streamAudio = New-Object System.IO.MemoryStream;$speak.SetOutputToWaveStream($streamAudio);$speak.Speak('I''m sorry, Dave.');$streamAudio.Position = 0; $streamAudio.ToArray()
-null
-```
-
-Clearly we have an issue here:
-```ps
-After text.replace:
-$speak.Speak('I''m sorry, Dave.');
-
-Before text.replace:
-$speak.Speak('I'm sorry, Dave.');
-```
-
-Let's open up the powershell script:
-```
-chcp 65001;
-Add-Type -AssemblyName System.speech;
-$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;
-$speak.SelectVoice('Microsoft David Desktop');
-$speak.Rate = -3;
-$streamAudio = New-Object System.IO.MemoryStream;
-$speak.SetOutputToWaveStream($streamAudio);
-$speak.Speak('I''m sorry, Dave.');
-$streamAudio.Position = 0;
-$streamAudio.ToArray()
-```
-
-Now let's run it in powershell...
-
-```PS
-PS C:\Users\Burgil> chcp 65001;
-Active code page: 65001
-PS C:\Users\Burgil> Add-Type -AssemblyName System.speech;
-PS C:\Users\Burgil> $speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;
-PS C:\Users\Burgil> $speak.SelectVoice('Microsoft David Desktop');
-PS C:\Users\Burgil> $speak.Rate = -3;
-PS C:\Users\Burgil> $streamAudio = New-Object System.IO.MemoryStream;
-PS C:\Users\Burgil> $speak.SetOutputToWaveStream($streamAudio);
-PS C:\Users\Burgil> $speak.Speak('I''m sorry, Dave.');
-PS C:\Users\Burgil> $streamAudio.Position = 0;
-PS C:\Users\Burgil> $streamAudio.ToArray()
-...
-5
-255
-0
-0
-1
-0
-253
-255
-249
-255
-254
-255
-254
-...
-```
-
-# It works!
-
-Let's test if the use of single quotes really was the underlying issue:
-```ps
-$speak.Speak('I'm sorry, Dave.');
-```
-
-Yes this was an issue:
-```
-> $speak.Speak('I'm sorry, Dave.');
->>
->>
->> ^C
-```
-
-Let's move on to getting it to return the array now as Uint8Array or something on the javascript side.
-
-# Update 6: Stream is still not working, with the same error as update 3, trying to figure out why, debugging:
-```ps
-PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
-PowerShell Script: chcp 65001;Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.SelectVoice('Microsoft David Desktop');$speak.Rate = -3;$streamAudio = New-Object System.IO.MemoryStream;$speak.SetOutputToWaveStream($streamAudio);$speak.Speak('I'm sorry, Dave.');$streamAudio.Position = 0; $streamAudio.ToArray()
-Error: Error: At line:1 char:282
-
-    at Socket.<anonymous> (C:\Users\Burgil\Desktop\say.js\platform\base.js:160:16)
-    at Socket.emit (node:events:514:28)
-    at addChunk (node:internal/streams/readable:343:12)
-    at readableAddChunk (node:internal/streams/readable:312:11)
-    at Readable.push (node:internal/streams/readable:253:10)
-    at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
-```
-
-# Update 5: Added stream audio buffer
-```js
-let audioStream = Buffer.alloc(0)
-this.child.stdout.on('data', data => {
-  audioStream = Buffer.concat([audioStream, data])
-})
-this.child.stderr.on('data', data => {
-  reject(new Error(data.toString()))
-})
-this.child.on('close', code => {
-  if (code !== 0) {
-    reject(new Error(`Process exited with code ${code}`))
-  } else {
-    resolve(audioStream)
-  }
-})
-```
-
-# Update 4: Stream is currently not returning any error, or anything:
-```ps
-PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
-null
-```
-
-# Update 3: First test failed, everything worked but stream.
-```ps
-PS C:\Users\Burgil\Desktop\say.js> node ./examples/basic-callback.js
-about to speak...
-done
-PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-allvoices.js
-Microsoft David Desktop
-Microsoft Zira Desktop
-PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-export.js
-Text has been saved to hal.wav.
-PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
-Error: Error: At line:1 char:282
-
-    at Socket.<anonymous> (C:\Users\Burgil\Desktop\say.js\platform\base.js:157:16)
-    at Object.onceWrapper (node:events:629:26)
-    at Socket.emit (node:events:514:28)
-    at addChunk (node:internal/streams/readable:343:12)
-    at readableAddChunk (node:internal/streams/readable:312:11)
-    at Readable.push (node:internal/streams/readable:253:10)
-    at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
-```
-
-# Update 2: I decided to not use text-to-speech AI as it is too expensive for my use-case, starting to test streaming on windows and later on I will add it to linux
-
-# Update 1: Stream is ready for Windows BUT was not tested yet, I probably still need to pipe it, But before I start - while closing tabs I've found Google's new Speech Synthesizer, An alternative that will save the time and effort required to later add support for linux or even worry about it: https://cloud.google.com/text-to-speech - AI Lifelike speech Synthesis - They give 300$ in free credits, But I'm not so sure about it yet, depending how cheap it is, and if I even get my 300$ in credits, I might recommend you to choose it instead if you're looking for hosting it behind a dedicated server like myself, I will update here as soon as I finished testing the pricing and the speed of this new AI lifelike speech synthesis by Google
-
 <img src="https://travis-ci.org/Marak/say.js.svg?branch=master" />
 
 <img src="https://github.com/Marak/say.js/raw/master/logo.png" />
+
+## Installing say.js fork
+
+```bash
+npm install burgil/say.js
+```
 
 ## Installing say.js
 
@@ -291,6 +129,174 @@ As an example, the default voice is `Alex` and the voice used by Siri is `Samant
 ## Windows Notes
 
 Enjoy streaming!
+
+More info about this fork can be found on this comment: https://github.com/Marak/say.js/issues/123#issuecomment-1996546069
+
+## Update 9: Ok so it works, But it's kind of slow, And it returns a buffer not a Uint8Array, I wonder how that will affect us later on, And I found a way to make it faster! I will add another function now called streamInRealTime and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
+
+## Update 8: Trying to return Uint8Array, when it works I will create an example express.js and a frontend no worries!
+
+Goal in life: Uint8Array
+
+* Debuggeed some lines
+* Removed debugging
+* Got the output to show on javascript!
+* Found the issue thanks to `// console.log('Output from PowerShell:', data.toString());`
+* resolve was null - changed to audioStream
+
+```PS
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
+<Buffer 41 63 74 69 76 65 20 63 6f 64 65 20 70 61 67 65 3a 20 36 35 30 30 31 0d 0a 38 32 0d 0a 37 33 0d 0a 37 30 0d 0a 37 30 0d 0a 31 34 30 0d 0a 33 37 0d 0a ... 511840 more bytes> 
+```
+Note: I feel like it's taking a lot of time to generate the stream.
+
+## Update 7: The issue seems to be related to the use of single quotes within the text 'I'm sorry, Dave.' in the PowerShell script. Since the PowerShell script itself is enclosed in single quotes, the presence of single quotes within the text is causing a syntax error.
+```js
+psCommand += `$speak.Speak('${text}');`
+->
+psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
+```
+Still getting null, but notice the error is gone:
+```ps
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
+PowerShell Script: chcp 65001;Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.SelectVoice('Microsoft David Desktop');$speak.Rate = -3;$streamAudio = New-Object System.IO.MemoryStream;$speak.SetOutputToWaveStream($streamAudio);$speak.Speak('I''m sorry, Dave.');$streamAudio.Position = 0; $streamAudio.ToArray()
+null
+```
+
+Clearly we have an issue here:
+```ps
+After text.replace:
+$speak.Speak('I''m sorry, Dave.');
+
+Before text.replace:
+$speak.Speak('I'm sorry, Dave.');
+```
+
+Let's open up the powershell script:
+```
+chcp 65001;
+Add-Type -AssemblyName System.speech;
+$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;
+$speak.SelectVoice('Microsoft David Desktop');
+$speak.Rate = -3;
+$streamAudio = New-Object System.IO.MemoryStream;
+$speak.SetOutputToWaveStream($streamAudio);
+$speak.Speak('I''m sorry, Dave.');
+$streamAudio.Position = 0;
+$streamAudio.ToArray()
+```
+
+Now let's run it in powershell...
+
+```PS
+PS C:\Users\Burgil> chcp 65001;
+Active code page: 65001
+PS C:\Users\Burgil> Add-Type -AssemblyName System.speech;
+PS C:\Users\Burgil> $speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;
+PS C:\Users\Burgil> $speak.SelectVoice('Microsoft David Desktop');
+PS C:\Users\Burgil> $speak.Rate = -3;
+PS C:\Users\Burgil> $streamAudio = New-Object System.IO.MemoryStream;
+PS C:\Users\Burgil> $speak.SetOutputToWaveStream($streamAudio);
+PS C:\Users\Burgil> $speak.Speak('I''m sorry, Dave.');
+PS C:\Users\Burgil> $streamAudio.Position = 0;
+PS C:\Users\Burgil> $streamAudio.ToArray()
+...
+5
+255
+0
+0
+1
+0
+253
+255
+249
+255
+254
+255
+254
+...
+```
+
+# It works!
+
+Let's test if the use of single quotes really was the underlying issue:
+```ps
+$speak.Speak('I'm sorry, Dave.');
+```
+
+Yes this was an issue:
+```
+> $speak.Speak('I'm sorry, Dave.');
+>>
+>>
+>> ^C
+```
+
+Let's move on to getting it to return the array now as Uint8Array or something on the javascript side.
+
+## Update 6: Stream is still not working, with the same error as update 3, trying to figure out why, debugging:
+```ps
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
+PowerShell Script: chcp 65001;Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.SelectVoice('Microsoft David Desktop');$speak.Rate = -3;$streamAudio = New-Object System.IO.MemoryStream;$speak.SetOutputToWaveStream($streamAudio);$speak.Speak('I'm sorry, Dave.');$streamAudio.Position = 0; $streamAudio.ToArray()
+Error: Error: At line:1 char:282
+
+    at Socket.<anonymous> (C:\Users\Burgil\Desktop\say.js\platform\base.js:160:16)
+    at Socket.emit (node:events:514:28)
+    at addChunk (node:internal/streams/readable:343:12)
+    at readableAddChunk (node:internal/streams/readable:312:11)
+    at Readable.push (node:internal/streams/readable:253:10)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
+```
+
+## Update 5: Added stream audio buffer
+```js
+let audioStream = Buffer.alloc(0)
+this.child.stdout.on('data', data => {
+  audioStream = Buffer.concat([audioStream, data])
+})
+this.child.stderr.on('data', data => {
+  reject(new Error(data.toString()))
+})
+this.child.on('close', code => {
+  if (code !== 0) {
+    reject(new Error(`Process exited with code ${code}`))
+  } else {
+    resolve(audioStream)
+  }
+})
+```
+
+## Update 4: Stream is currently not returning any error, or anything:
+```ps
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
+null
+```
+
+## Update 3: First test failed, everything worked but stream.
+```ps
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/basic-callback.js
+about to speak...
+done
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-allvoices.js
+Microsoft David Desktop
+Microsoft Zira Desktop
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-export.js
+Text has been saved to hal.wav.
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
+Error: Error: At line:1 char:282
+
+    at Socket.<anonymous> (C:\Users\Burgil\Desktop\say.js\platform\base.js:157:16)
+    at Object.onceWrapper (node:events:629:26)
+    at Socket.emit (node:events:514:28)
+    at addChunk (node:internal/streams/readable:343:12)
+    at readableAddChunk (node:internal/streams/readable:312:11)
+    at Readable.push (node:internal/streams/readable:253:10)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
+```
+
+## Update 2: I decided to not use text-to-speech AI as it is too expensive for my use-case, starting to test streaming on windows and later on I will add it to linux
+
+## Update 1: Stream is ready for Windows BUT was not tested yet, I probably still need to pipe it, But before I start - while closing tabs I've found Google's new Speech Synthesizer, An alternative that will save the time and effort required to later add support for linux or even worry about it: https://cloud.google.com/text-to-speech - AI Lifelike speech Synthesis - They give 300$ in free credits, But I'm not so sure about it yet, depending how cheap it is, and if I even get my 300$ in credits, I might recommend you to choose it instead if you're looking for hosting it behind a dedicated server like myself, I will update here as soon as I finished testing the pricing and the speed of this new AI lifelike speech synthesis by Google
 
 ## Linux Notes
 
