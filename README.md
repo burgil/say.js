@@ -36,7 +36,6 @@ $streamAudio.ToArray()
 
 Now let's run it in powershell...
 
-It works!
 ```PS
 PS C:\Users\Burgil> chcp 65001;
 Active code page: 65001
@@ -65,6 +64,8 @@ PS C:\Users\Burgil> $streamAudio.ToArray()
 254
 ...
 ```
+
+# It works!
 
 Let's test if the use of single quotes really was the underlying issue:
 ```ps
