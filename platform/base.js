@@ -187,8 +187,6 @@ class SayPlatformBase {
     if (typeof data_callback !== 'function') {
       data_callback = () => {}
     }
-
-    data_callback = once(data_callback)
     
     if (typeof error_callback !== 'function') {
       error_callback = () => {}
