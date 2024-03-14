@@ -54,16 +54,20 @@
                     }
                     const audioContext = new AudioContext();
                     const audioData = await response.arrayBuffer();
+                    console.log('test:', audioData)
                     audioContext.decodeAudioData(audioData, buffer => {
                         const source = audioContext.createBufferSource();
                         source.buffer = buffer;
                         source.connect(audioContext.destination);
                         source.start();
+                    }, error => {
+                        console.error('Error decoding audio data:', error);
                     });
                 } catch (error) {
                     console.error('There was a problem playing audio:', error);
                 }
             });
+
             // playButton.addEventListener('click', async () => {
             //     const text = textInput.value;
             //     const voice = voiceSelect.value;

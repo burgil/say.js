@@ -14,137 +14,103 @@ class SayPlatformWin32 extends SayPlatformBase {
   }
 
   buildSpeakCommand ({ text, voice, speed }) {
-    let args = []
-    let options = {}
-
-    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
-
-    if (voice) {
-      psCommand += `$speak.SelectVoice('${voice}');`
-    }
-
+    let args = [];
+    let options = {};
+    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
     if (speed) {
-      let adjustedSpeed = this.convertSpeed(speed || 1)
-      psCommand += `$speak.Rate = ${adjustedSpeed};`
+      let adjustedSpeed = this.convertSpeed(speed || 1);
+      psCommand += `$speak.Rate = ${adjustedSpeed};`;
     }
-
-    psCommand += `$speak.Speak([Console]::In.ReadToEnd())`
-
+    psCommand += `$speak.Speak([Console]::In.ReadToEnd())`;
     // console.log("PowerShell Script:", psCommand);
-
-    args.push(psCommand)
-    options.shell = true
-
-    return { command: COMMAND, args, pipedData: text, options }
+    args.push(psCommand);
+    options.shell = true;
+    return { command: COMMAND, args, pipedData: text, options };
   }
 
   buildExportCommand ({ text, voice, speed, filename }) {
-    let args = []
-    let options = {}
-
-    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
-
-    if (voice) {
-      psCommand += `$speak.SelectVoice('${voice}');`
-    }
-
+    let args = [];
+    let options = {};
+    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
     if (speed) {
-      let adjustedSpeed = this.convertSpeed(speed || 1)
-      psCommand += `$speak.Rate = ${adjustedSpeed};`
+      let adjustedSpeed = this.convertSpeed(speed || 1);
+      psCommand += `$speak.Rate = ${adjustedSpeed};`;
     }
-
-    if (!filename) throw new Error('Filename must be provided in export();')
-    else {
-      psCommand += `$speak.SetOutputToWaveFile('${filename}');` // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
+    if (!filename) {
+      throw new Error('Filename must be provided in export();');
+    } else {
+      psCommand += `$speak.SetOutputToWaveFile('${filename}');`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
     }
-
-    psCommand += `$speak.Speak([Console]::In.ReadToEnd());$speak.Dispose()`
-
+    psCommand += `$speak.Speak([Console]::In.ReadToEnd());$speak.Dispose()`;
     // console.log("PowerShell Script:", psCommand);
+    args.push(psCommand);
+    options.shell = true;
 
-    args.push(psCommand)
-    options.shell = true
-
-    return { command: COMMAND, args, pipedData: text, options }
+    return { command: COMMAND, args, pipedData: text, options };
   }
 
   buildStreamCommand({ text, voice, speed }) {
-    let args = []
-    let options = {}
-
-    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
-
-    if (voice) {
-      psCommand += `$speak.SelectVoice('${voice}');`
-    }
-
+    let args = [];
+    let options = {};
+    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
     if (speed) {
-      let adjustedSpeed = this.convertSpeed(speed || 1)
+      let adjustedSpeed = this.convertSpeed(speed || 1);
       psCommand += `$speak.Rate = ${adjustedSpeed};`
     }
-
-    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`
-    psCommand += `$speak.SetOutputToWaveStream($streamAudio);` // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavestream?view=dotnet-plat-ext-8.0
-    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
-    psCommand += `$streamAudio.Position = 0; $streamAudio.ToArray()`
-
+    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavestream?view=dotnet-plat-ext-8.0
+    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`;
+    psCommand += `$streamAudio.Position = 0;`;
+    psCommand += `$streamAudio.ToArray()`;
     // console.log("PowerShell Script:", psCommand);
-
-    args.push(psCommand)
-    options.shell = true
-
-    return { command: COMMAND, args, pipedData: text, options }
+    args.push(psCommand);
+    options.shell = true;
+    return { command: COMMAND, args, pipedData: text, options };
   }
 
   buildStreamRealTimeCommand ({ text, voice, speed }) {
-    let args = []
-    let options = {}
-
-    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`
-
-    if (voice) {
-      psCommand += `$speak.SelectVoice('${voice}');`
-    }
-
+    let args = [];
+    let options = {};
+    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
     if (speed) {
-      let adjustedSpeed = this.convertSpeed(speed || 1)
-      psCommand += `$speak.Rate = ${adjustedSpeed};`
+      let adjustedSpeed = this.convertSpeed(speed || 1);
+      psCommand += `$speak.Rate = ${adjustedSpeed};`;
     }
-
-    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`
-    psCommand += `$speak.SetOutputToWaveStream($streamAudio);` // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavestream?view=dotnet-plat-ext-8.0
-    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`
-    psCommand += `$streamAudio.Position = 0; $streamAudio.ToArray()`
-
+    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavestream?view=dotnet-plat-ext-8.0
+    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`;
+    psCommand += `$streamAudio.Position = 0; $streamAudio.ToArray()`;
     // console.log("PowerShell Script:", psCommand);
-
-    args.push(psCommand)
-    options.shell = true
-
-    return { command: COMMAND, args, pipedData: text, options }
+    args.push(psCommand);
+    options.shell = true;
+    return { command: COMMAND, args, pipedData: text, options };
   }
 
   runStopCommand () {
-    this.child.stdin.pause()
-    childProcess.exec(`taskkill /pid ${this.child.pid} /T /F`)
+    this.child.stdin.pause();
+    childProcess.exec(`taskkill /pid ${this.child.pid} /T /F`);
   }
 
   convertSpeed (speed) {
     // Overriden to map playback speed (as a ratio) to Window's values (-10 to 10, zero meaning x1.0)
-    return Math.max(-10, Math.min(Math.round((9.0686 * Math.log(speed)) - 0.1806), 10))
+    return Math.max(-10, Math.min(Math.round((9.0686 * Math.log(speed)) - 0.1806), 10));
   }
 
   getVoices () {
-    let args = []
-    let psCommand = `chcp 65001;` // Change powershell encoding to utf-8
-    psCommand += 'Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.GetInstalledVoices() | % {$_.VoiceInfo.Name}'
+    let args = [];
+    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    psCommand += 'Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.GetInstalledVoices() | % {$_.VoiceInfo.Name}';
     // console.log("PowerShell Script:", psCommand);
-    args.push(psCommand)
-    return { command: COMMAND, args }
+    args.push(psCommand);
+    return { command: COMMAND, args };
   }
 }
 
