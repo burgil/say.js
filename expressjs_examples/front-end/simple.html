@@ -21,7 +21,7 @@
       const textInput = document.getElementById('textInput');
       const voiceSelect = document.getElementById('voiceSelect');
       // Created by Burgil
-      fetch('/voices').then(response => {
+      fetch('http://localhost/voices').then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -43,7 +43,7 @@
       playButton.addEventListener('click', () => {
         const text = textInput.value;
         const voice = voiceSelect.value;
-        fetch('/tts-export', {
+        fetch('http://localhost/tts-export', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

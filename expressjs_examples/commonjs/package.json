@@ -10,6 +10,7 @@
   "author": "github.com/burgil",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.3",
     "say": "github:burgil/say.js"
   }

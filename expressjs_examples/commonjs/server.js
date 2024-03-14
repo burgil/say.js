@@ -1,7 +1,12 @@
 const say = require('say');
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const app = express();
+app.use(cors({
+    origin: '*', // Allows access to all origins! - Insecure - Replace with site url in real world applications - http://example.com
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}));
 app.use(express.json());
 
 // app.use('/files', express.static(path.join(__dirname, '../files')));
