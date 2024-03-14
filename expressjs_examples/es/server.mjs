@@ -38,9 +38,14 @@ app.post('/tts-export', (req, res) => { // warning unless some unique uuid will 
 app.post('/tts-stream', async (req, res) => {
     const { text, voice, speed } = req.body;
     try {
+        // Stream spoken audio
         const spokenStream = await say.stream(text, voice, speed);
+
+        // Set the response headers
         res.setHeader('Content-Type', 'audio/wav');
-        spokenStream.pipe(res);
+
+        // Pipe the spoken stream to the response
+        res.end(spokenStream);
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'An error occurred while generating speech.' });
@@ -52,17 +57,17 @@ app.post('/tts-stream-real-time', async (req, res) => {
     const { text, voice, speed } = req.body;
     try {
         const passThroughStream = new PassThrough();
-        
+
         // Stream spoken audio in real-time
         say.streamRealTime(text, voice, speed,
             // Data callback
             (data) => {
-                // Send each chunk of audio data to the client in real-time
+                // Write data to the PassThrough stream
                 passThroughStream.write(data);
             },
             // Finish callback
             () => {
-                // Finish streaming when speech is complete
+                // End the PassThrough stream when speech is complete
                 passThroughStream.end();
             },
             // Error callback
@@ -75,7 +80,7 @@ app.post('/tts-stream-real-time', async (req, res) => {
 
         // Set the response headers
         res.setHeader('Content-Type', 'audio/wav');
-        
+
         // Pipe the PassThrough stream to the response
         passThroughStream.pipe(res);
     } catch (err) {
