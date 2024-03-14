@@ -161,7 +161,7 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 Enjoy streaming!
 
-## Update 11: Working on stream in real time..
+## Update 11: Working on streaming in real time..
 
 ## Update 10: Added expressjs examples!
 
