@@ -5,6 +5,8 @@ const SayPlatformBase = require('./base.js')
 const BASE_SPEED = 0 // Unsupported
 const COMMAND = 'powershell'
 
+// Make 3rd party voice available: https://github.com/Marak/say.js/pull/124/commits/54db0b2461c6684c3af3c7b7e457c09eb68242a8#diff-0050c265833e044a117f818c557214bf7743ef0c0e0922837c38f691c03f5a74
+
 class SayPlatformWin32 extends SayPlatformBase {
   constructor () {
     super()
@@ -53,7 +55,7 @@ class SayPlatformWin32 extends SayPlatformBase {
 
     if (!filename) throw new Error('Filename must be provided in export();')
     else {
-      psCommand += `$speak.SetOutputToWaveFile('${filename}');`
+      psCommand += `$speak.SetOutputToWaveFile('${filename}');` // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
     }
 
     psCommand += `$speak.Speak([Console]::In.ReadToEnd());$speak.Dispose()`
@@ -82,7 +84,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     }
 
     psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`
-    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);` // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavestream?view=dotnet-plat-ext-8.0
     psCommand += `$speak.Speak('${text}');`
     psCommand += `$streamAudio.Position = 0; $streamAudio.ToArray()`
 

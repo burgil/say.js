@@ -1,3 +1,5 @@
+# Stream was not tested yet, I am looking into an alternative that will same the time and effort required to later add support for linux or even worry about it: https://cloud.google.com/text-to-speech - AI Lifelike speech Synthesis
+
 <img src="https://travis-ci.org/Marak/say.js.svg?branch=master" />
 
 <img src="https://github.com/Marak/say.js/raw/master/logo.png" />
