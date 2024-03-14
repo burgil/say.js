@@ -214,7 +214,7 @@ say.export("I'm sorry, Dave.", 'Cellos', 0.75, 'hal.wav', (err) => {
   console.log('Text has been saved to hal.wav.')
 })
 
-// Export spoken audio to a Stream
+// Stream spoken audio
 async function main() {
   try {
     const spokenStream = await say.stream("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75);
