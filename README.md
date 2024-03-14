@@ -170,6 +170,8 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 ## Fork Patch Logs:
 
+### Update 17: Still unable to play to streaming audio on the front end - But we're streaming!
+
 ### Update 16: Fixed backend streaming, now frontend is still returning Uncaught (in promise) DOMException: Failed to load because no supported source was found.
 
 ### Update 15: The new streaming feature is not gonna be easy to implement using express js not to mention making a front end for it, we already got the stream we just need to play it.. I am going to grab something to eat if anybody wanna do it now it's the time
