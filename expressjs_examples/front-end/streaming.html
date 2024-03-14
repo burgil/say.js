@@ -54,7 +54,6 @@
                     }
                     const audioContext = new AudioContext();
                     const audioData = await response.arrayBuffer();
-                    console.log('test:', audioData)
                     audioContext.decodeAudioData(audioData, buffer => {
                         const source = audioContext.createBufferSource();
                         source.buffer = buffer;
