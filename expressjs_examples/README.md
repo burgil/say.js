@@ -20,6 +20,10 @@ npm install
 npm start
 ```
 
+2. Open any of the front ends
+
+TODO: add authentication, security, rate limits and etc
+
 # Advanced:
 
 This is how I installed this fork on those projects:
