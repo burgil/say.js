@@ -2,7 +2,7 @@ const say = require('say');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const { PassThrough } = require('stream');
+const { PassThrough, Readable } = require('stream');
 const app = express();
 app.use(cors({
     origin: '*', // Allows access to all origins! - Insecure - Replace with site url in real world applications - http://example.com
@@ -37,13 +37,18 @@ app.post('/tts-stream', async (req, res) => {
     const { text, voice, speed } = req.body;
     try {
         // Stream spoken audio
-        const spokenStream = await say.stream(text, voice, speed);
+        const spokenBuffer = await say.stream(text, voice, speed);
+        
+        // Convert buffer to readable stream
+        const spokenStream = new Readable();
+        spokenStream.push(spokenBuffer);
+        spokenStream.push(null);
 
         // Set the response headers
         res.setHeader('Content-Type', 'audio/wav');
 
         // Pipe the spoken stream to the response
-        res.end(spokenStream);
+        spokenStream.pipe(res);
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'An error occurred while generating speech.' });

@@ -2,7 +2,7 @@ import say from 'say';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { PassThrough } from 'stream';
+import { PassThrough, Readable } from 'stream';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,13 +39,18 @@ app.post('/tts-stream', async (req, res) => {
     const { text, voice, speed } = req.body;
     try {
         // Stream spoken audio
-        const spokenStream = await say.stream(text, voice, speed);
+        const spokenBuffer = await say.stream(text, voice, speed);
+        
+        // Convert buffer to readable stream
+        const spokenStream = new Readable();
+        spokenStream.push(spokenBuffer);
+        spokenStream.push(null);
 
         // Set the response headers
         res.setHeader('Content-Type', 'audio/wav');
 
         // Pipe the spoken stream to the response
-        res.end(spokenStream);
+        spokenStream.pipe(res);
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'An error occurred while generating speech.' });

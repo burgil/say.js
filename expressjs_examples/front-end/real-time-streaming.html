@@ -17,7 +17,51 @@
             const textInput = document.getElementById('textInput');
             const voiceSelect = document.getElementById('voiceSelect');
             // Created by Burgil
-            // http://localhost/tts-stream-real-time
+            fetch('http://localhost/voices').then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            }).then(voices => {
+                const voiceSelect = document.getElementById('voiceSelect');
+                voiceSelect.innerHTML = '';
+                voices.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.value = voice;
+                    option.textContent = voice;
+                    voiceSelect.appendChild(option);
+                });
+            }).catch(error => {
+                console.error('There was a problem fetching available voices:', error);
+            });
+
+            // Play button click event listener
+            playButton.addEventListener('click', async () => {
+                const text = textInput.value;
+                const voice = voiceSelect.value;
+                try {
+                    const response = await fetch('http://localhost/tts-stream-real-time', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ text, voice })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const audioContext = new AudioContext();
+                    const audioStream = audioContext.createMediaElementSource(document.createElement('audio'));
+                    audioStream.connect(audioContext.destination);
+                    const audioBlob = await response.blob();
+                    const audioBlobURL = URL.createObjectURL(audioBlob);
+                    audioStream.mediaElement.src = audioBlobURL;
+                    audioStream.mediaElement.play();
+                } catch (error) {
+                    console.error('There was a problem playing audio:', error);
+                }
+            });
+
             // Created by Burgil
         </script>
     </body>
