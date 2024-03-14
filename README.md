@@ -1,14 +1,14 @@
+#### Modified to support streaming and all open pull requests has been merged manually one by one - TTS (text to speech) for node.js. send text from node.js to your speakers (or clients using express.js). Join the discussions:
+
+### More info about this fork can be found on this comment: https://github.com/Marak/say.js/issues/123#issuecomment-1996546069
+
 <img src="https://github.com/Marak/say.js/raw/master/logo.png" />
 
-## Installing say.js fork
+## Installing burgil say.js fork
 
 ```bash
 npm install burgil/say.js
 ```
-
-## Express JS Examples
-Checkout the folder `expressjs_examples` on the repo root.
-https://github.com/burgil/say.js/tree/master/expressjs_examples
 
 ## Usage (Use it like you normally would)
 
@@ -59,6 +59,10 @@ async function main() {
 main();
 ```
 
+## Express JS Examples
+Checkout the folder `expressjs_examples` on the repo root.
+https://github.com/burgil/say.js/tree/master/expressjs_examples
+
 ### Methods
 
 #### Speak:
@@ -87,6 +91,15 @@ say.export(text, voice || null, speed || null, filename, callback || null)
 say.stream(text, voice || null, speed || null)
 ```
 
+#### Stream Audio in Real Time:
+
+* Windows Only
+* Speed: 1 = 100%, 0.5 = 50%, 2 = 200%, etc
+
+```javascript
+say.streamRealTime(text, voice || null, speed || null)
+```
+
 #### Stop Speaking:
 
 ```javascript
@@ -98,27 +111,6 @@ say.stop(callback || null)
 ```javascript
 say.getInstalledVoices(callback)
 ```
-
-## Feature Matrix
-
-Unfortunately every feature isn't supported on every platform. PR's welcome!
-
-Platform | Speak | Export | Stop | Speed | Voice | List | Stream
----------|-------|--------|------|-------|-------|------|-------
-macOS    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
-Linux    | :white_check_mark: | :no_entry_sign:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
-Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
-
-
-## macOS Notes
-
-Voices in macOS are associated with different localities. To a list of voices and their localities run the following command:
-
-```sh
-say -v "?"
-```
-
-As an example, the default voice is `Alex` and the voice used by Siri is `Samantha`.
 
 ### Testing examples:
 
@@ -143,13 +135,32 @@ echo speak:
 node ./examples/win32-basic-callback.js
 ```
 
+## Feature Matrix
+
+Unfortunately every feature isn't supported on every platform. PR's welcome!
+
+Platform | Speak | Export | Stop | Speed | Voice | List | Stream
+---------|-------|--------|------|-------|-------|------|-------
+macOS    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
+Linux    | :white_check_mark: | :no_entry_sign:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
+Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
+
+
+## Requirements
+
+* Mac OS X (comes with `say`)
+* Linux with Festival installed
+* Windows (comes with SAPI.SpVoice)
+  * Needs to have Powershell installed and available in $PATH (see [issue #75](https://github.com/Marak/say.js/issues/75))
+
+
 ## Windows Notes
 
 Enjoy streaming!
 
-More info about this fork can be found on this comment: https://github.com/Marak/say.js/issues/123#issuecomment-1996546069
+## Update 10: Added expressjs examples!
 
-## Update 9: Ok so it works, But it's kind of slow, And it returns a buffer not a Uint8Array, I wonder how that will affect us later on, And I found a way to make it faster! I will add another function now called streamInRealTime and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
+## Update 9: Ok so it works, But it's kind of slow, And it returns a buffer not a Uint8Array, I wonder how that will affect us later on, And I found a way to make it faster! I will add another function now called streamRealTime and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
 
 ## Update 8: Trying to return Uint8Array, when it works I will create an example express.js and a frontend no worries!
 
@@ -331,9 +342,12 @@ sudo apt-get install festival festvox-kallpc16k
 ```
 
 
-## Requirements
+## macOS Notes
 
-* Mac OS X (comes with `say`)
-* Linux with Festival installed
-* Windows (comes with SAPI.SpVoice)
-  * Needs to have Powershell installed and available in $PATH (see [issue #75](https://github.com/Marak/say.js/issues/75))
+Voices in macOS are associated with different localities. To a list of voices and their localities run the following command:
+
+```sh
+say -v "?"
+```
+
+As an example, the default voice is `Alex` and the voice used by Siri is `Samantha`.
