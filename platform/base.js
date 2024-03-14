@@ -153,9 +153,6 @@ class SayPlatformBase {
       this.child.stdin.setEncoding('utf-8')
       this.child.stderr.setEncoding('utf-8')
       if (pipedData) this.child.stdin.end(pipedData)
-      this.child.stderr.once('data', (data) => {
-        reject(new Error(data))
-      })
       this.child.addListener('exit', (code, signal) => {
         if (code === null || signal !== null) return reject(new Error(`say.export(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
         this.child = null
