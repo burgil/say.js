@@ -97,14 +97,3 @@ app.get('/voices', async function (req, res) {
 const port = 80;
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
-
-// stream spoken audio test
-async function test() {
-    try {
-        const spokenStream = await say.stream("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75);
-        console.log(spokenStream) // Buffer - Not Uint8Array yet ?
-    } catch (e) {
-        console.error("Error:", e)
-    }
-}
-test();
