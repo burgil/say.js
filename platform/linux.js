@@ -33,10 +33,6 @@ class SayPlatformLinux extends SayPlatformBase {
     throw new Error(`say.stream(): does not support platform ${this.platform}`)
   }
 
-  buildStreamRealTimeCommand ({ text, voice, speed }) {
-    throw new Error(`say.streamRealTime(): does not support platform ${this.platform}`)
-  }
-
   buildExportCommand ({ text, voice, speed, filename }) {
     let args = []
     let pipedData = undefined
