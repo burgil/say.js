@@ -97,7 +97,7 @@ say.stream(text, voice || null, speed || null)
 * Speed: 1 = 100%, 0.5 = 50%, 2 = 200%, etc
 
 ```javascript
-say.streamRealTime(text, voice || null, speed || null, callback || null)
+say.streamRealTime(text, voice || null, speed || null, data_callback || null, error_callback || null)
 ```
 
 #### Stop Speaking:
