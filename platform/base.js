@@ -117,6 +117,60 @@ class SayPlatformBase {
   }
 
   /**
+   * Uses system libraries to speak text via the speakers and stream it back.
+   *
+   * @param {string} text Text to be spoken
+   * @param {string|null} voice Name of voice to be spoken with
+   * @param {number|null} speed Speed of text (e.g. 1.0 for normal, 0.5 half, 2.0 double)
+   * @param {Function|null} callback A callback of type function(err) to return.
+   */
+  stream (text, voice, speed, callback) {
+    if (typeof callback !== 'function') {
+      callback = () => {}
+    }
+
+    callback = once(callback)
+
+    if (!text) {
+      return setImmediate(() => {
+        callback(new TypeError('say.stream(): must provide text parameter'))
+      })
+    }
+
+    try {
+      var { command, args, pipedData, options } = this.buildExportCommand({ text, voice, speed })
+    } catch (error) {
+      return setImmediate(() => {
+        callback(error)
+      })
+    }
+
+    this.child = childProcess.spawn(command, args, options)
+
+    this.child.stdin.setEncoding('ascii')
+    this.child.stderr.setEncoding('ascii')
+
+    if (pipedData) {
+      this.child.stdin.end(pipedData)
+    }
+
+    this.child.stderr.once('data', (data) => {
+      // we can't stop execution from this function
+      callback(new Error(data))
+    })
+
+    this.child.addListener('exit', (code, signal) => {
+      if (code === null || signal !== null) {
+        return callback(new Error(`say.export(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
+      }
+
+      this.child = null
+
+      callback(null)
+    })
+  }
+
+  /**
    * Stops currently playing audio. There will be unexpected results if multiple audios are being played at once
    *
    * TODO: If two messages are being spoken simultaneously, childD points to new instance, no way to kill previous
