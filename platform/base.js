@@ -152,6 +152,20 @@ class SayPlatformBase {
       this.child = childProcess.spawn(command, args, options)
       this.child.stdin.setEncoding('utf-8')
       this.child.stderr.setEncoding('utf-8')
+      let audioStream = Buffer.alloc(0)
+      child.stdout.on('data', data => {
+        audioStream = Buffer.concat([audioStream, data])
+      })
+      child.stderr.on('data', data => {
+        reject(new Error(data.toString()))
+      })
+      child.on('close', code => {
+        if (code !== 0) {
+          reject(new Error(`Process exited with code ${code}`))
+        } else {
+          resolve(audioStream)
+        }
+      })
       if (pipedData) this.child.stdin.end(pipedData)
       this.child.addListener('exit', (code, signal) => {
         if (code === null || signal !== null) return reject(new Error(`say.export(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
