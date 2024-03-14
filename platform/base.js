@@ -153,9 +153,13 @@ class SayPlatformBase {
       this.child.stdin.setEncoding('utf-8')
       this.child.stderr.setEncoding('utf-8')
       let audioStream = Buffer.alloc(0)
+      let ignoreCHCP = true;
       this.child.stdout.on('data', data => {
-        // console.log('Output from PowerShell:', data.toString());
-        audioStream = Buffer.concat([audioStream, data])
+        if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
+          if (ignoreCHCP) ignoreCHCP = false;
+          // console.log('Output from PowerShell:', data.toString());
+          audioStream = Buffer.concat([audioStream, data])
+        }
       })
       this.child.stderr.on('data', data => {
         console.error('Error output from PowerShell:', data.toString());
@@ -222,8 +226,13 @@ class SayPlatformBase {
       // we can't stop execution from this function
       callback(new Error(data))
     })
+    let ignoreCHCP = true;
     this.child.stdout.on('data', function (data) {
-      voices += data
+      if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
+        if (ignoreCHCP) ignoreCHCP = false;
+        // console.log('Output from PowerShell:', data.toString());
+        voices += data
+      }
     })
 
     this.child.addListener('exit', (code, signal) => {
