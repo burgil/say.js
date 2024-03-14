@@ -96,7 +96,7 @@
           const voice = voiceSelect.value;
 
           // Send a POST request to the TTS API
-          const ttsResponse = await fetch('/tts', {
+          const ttsResponse = await fetch('/tts-export', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

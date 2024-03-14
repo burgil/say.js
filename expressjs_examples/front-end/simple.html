@@ -43,7 +43,7 @@
       playButton.addEventListener('click', () => {
         const text = textInput.value;
         const voice = voiceSelect.value;
-        fetch('/tts', {
+        fetch('/tts-export', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

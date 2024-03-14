@@ -12,7 +12,7 @@ app.use(express.json());
 //     res.sendFile(path.join(__dirname, '../front-end/mp3.html'));
 // });
 
-app.post('/tts', (req, res) => {
+app.post('/tts-export', (req, res) => { // warning unless some unique uuid will be used instead of output.wav as the file name then conflicts will happen in run time - TODO: add tmp folder and UUID as file name and also delete the files after usage - but who the heck will even want to stream it like this?
     const { text, voice } = req.body;
     const filePath = path.join(__dirname, 'output.wav');
     say.export(text, voice, 1, filePath, (err) => {
