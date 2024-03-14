@@ -17,7 +17,8 @@ class SayPlatformWin32 extends SayPlatformBase {
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    psCommand += `Add-Type -AssemblyName System.speech;`;
+    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
     if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
     if (speed) {
       let adjustedSpeed = this.convertSpeed(speed || 1);
@@ -34,7 +35,8 @@ class SayPlatformWin32 extends SayPlatformBase {
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    psCommand += `Add-Type -AssemblyName System.speech;`;
+    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
     if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
     if (speed) {
       let adjustedSpeed = this.convertSpeed(speed || 1);
@@ -57,7 +59,8 @@ class SayPlatformWin32 extends SayPlatformBase {
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    psCommand += `Add-Type -AssemblyName System.speech;`;
+    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
     if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
     if (speed) {
       let adjustedSpeed = this.convertSpeed(speed || 1);
@@ -78,7 +81,8 @@ class SayPlatformWin32 extends SayPlatformBase {
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    psCommand += `Add-Type -AssemblyName System.speech;`;
+    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
     if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
     if (speed) {
       let adjustedSpeed = this.convertSpeed(speed || 1);
@@ -107,7 +111,8 @@ class SayPlatformWin32 extends SayPlatformBase {
   getVoices () {
     let args = [];
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
-    psCommand += 'Add-Type -AssemblyName System.speech;$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.GetInstalledVoices() | % {$_.VoiceInfo.Name}';
+    psCommand += 'Add-Type -AssemblyName System.speech;';
+    psCommand += '$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;$speak.GetInstalledVoices() | % {$_.VoiceInfo.Name}';
     // console.log("PowerShell Script:", psCommand);
     args.push(psCommand);
     return { command: COMMAND, args };
