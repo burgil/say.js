@@ -52,6 +52,13 @@
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
+                    const audioContext = new AudioContext();
+                    const audioData = await response.arrayBuffer();
+                    const blob = new Blob([audioData], { type: 'audio/wav' });
+                    const audioURL = URL.createObjectURL(blob);
+                    const audio = new Audio(audioURL);
+                    audio.play();
+
                     // const audioContext = new AudioContext();
                     // let audioBuffer;
                     // const audioData = await response.arrayBuffer();
@@ -61,16 +68,16 @@
                     // source.buffer = audioBuffer;
                     // source.connect(audioContext.destination);
                     // source.start();
-                    const audioContext = new AudioContext();
-                    const audioData = await response.arrayBuffer();
-                    audioContext.decodeAudioData(audioData, buffer => {
-                        const source = audioContext.createBufferSource();
-                        source.buffer = buffer;
-                        source.connect(audioContext.destination);
-                        source.start();
-                    }, error => {
-                        console.error('Error decoding audio data:', error);
-                    });
+                    // const audioContext = new AudioContext();
+                    // const audioData = await response.arrayBuffer();
+                    // audioContext.decodeAudioData(audioData, buffer => {
+                    //     const source = audioContext.createBufferSource();
+                    //     source.buffer = buffer;
+                    //     source.connect(audioContext.destination);
+                    //     source.start();
+                    // }, error => {
+                    //     console.error('Error decoding audio data:', error);
+                    // });
                 } catch (error) {
                     console.error('There was a problem playing audio:', error);
                 }
