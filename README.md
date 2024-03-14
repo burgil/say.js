@@ -1,10 +1,25 @@
-# Update 3: Stream is currently not returning any error, or anything:
+# Update 6: Stream is still not working, with the same error as update 3, trying to figure out why:
+```ps
+PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
+Error: Error: At line:1 char:282
+
+    at Socket.<anonymous> (C:\Users\Burgil\Desktop\say.js\platform\base.js:160:16)
+    at Socket.emit (node:events:514:28)
+    at addChunk (node:internal/streams/readable:343:12)
+    at readableAddChunk (node:internal/streams/readable:312:11)
+    at Readable.push (node:internal/streams/readable:253:10)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
+```
+
+# Update 5: Added stream audio buffer
+
+# Update 4: Stream is currently not returning any error, or anything:
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/win32-stream.js
 null
 ```
 
-# Update 2: First test failed:
+# Update 3: First test failed, everything worked but stream.
 ```ps
 PS C:\Users\Burgil\Desktop\say.js> node ./examples/basic-callback.js
 about to speak...
@@ -24,13 +39,11 @@ Error: Error: At line:1 char:282
     at readableAddChunk (node:internal/streams/readable:312:11)
     at Readable.push (node:internal/streams/readable:253:10)
     at Pipe.onStreamRead (node:internal/stream_base_commons:190:23)
-PS C:\Users\Burgil\Desktop\say.js> 
 ```
-Note: everything else worked, just stream didnt work
 
-# Update 1: I decided to not use text-to-speech AI as it is too expensive for my use-case, starting to test streaming on windows and later on I will add it to linux
+# Update 2: I decided to not use text-to-speech AI as it is too expensive for my use-case, starting to test streaming on windows and later on I will add it to linux
 
-# Stream is ready for Windows BUT was not tested yet, I probably still need to pipe it, But before I start - while closing tabs I've found Google's new Speech Synthesizer, An alternative that will save the time and effort required to later add support for linux or even worry about it: https://cloud.google.com/text-to-speech - AI Lifelike speech Synthesis - They give 300$ in free credits, But I'm not so sure about it yet, depending how cheap it is, and if I even get my 300$ in credits, I might recommend you to choose it instead if you're looking for hosting it behind a dedicated server like myself, I will update here as soon as I finished testing the pricing and the speed of this new AI lifelike speech synthesis by Google
+# Update 1: Stream is ready for Windows BUT was not tested yet, I probably still need to pipe it, But before I start - while closing tabs I've found Google's new Speech Synthesizer, An alternative that will save the time and effort required to later add support for linux or even worry about it: https://cloud.google.com/text-to-speech - AI Lifelike speech Synthesis - They give 300$ in free credits, But I'm not so sure about it yet, depending how cheap it is, and if I even get my 300$ in credits, I might recommend you to choose it instead if you're looking for hosting it behind a dedicated server like myself, I will update here as soon as I finished testing the pricing and the speed of this new AI lifelike speech synthesis by Google
 
 <img src="https://travis-ci.org/Marak/say.js.svg?branch=master" />
 
