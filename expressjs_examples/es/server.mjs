@@ -1,10 +1,10 @@
 import say from 'say';
 
 import express from 'express';
-// import path from 'path';
-// import { fileURLToPath } from 'url';
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 // app.use('/files', express.static(path.join(__dirname, '../files')));
