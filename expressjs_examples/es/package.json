@@ -5,7 +5,7 @@
   "main": "server.mjs",
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.mjs"
   },
   "keywords": [],
   "author": "github.com/burgil",
