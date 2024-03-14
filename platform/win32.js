@@ -8,12 +8,12 @@ const COMMAND = 'powershell'
 // Make 3rd party voice available: https://github.com/Marak/say.js/pull/124/commits/54db0b2461c6684c3af3c7b7e457c09eb68242a8#diff-0050c265833e044a117f818c557214bf7743ef0c0e0922837c38f691c03f5a74
 
 class SayPlatformWin32 extends SayPlatformBase {
-  constructor () {
+  constructor() {
     super()
     this.baseSpeed = BASE_SPEED
   }
 
-  buildSpeakCommand ({ text, voice, speed }) {
+  buildSpeakCommand({ text, voice, speed }) {
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
@@ -31,7 +31,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, pipedData: text, options };
   }
 
-  buildExportCommand ({ text, voice, speed, filename }) {
+  buildExportCommand({ text, voice, speed, filename }) {
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
@@ -55,7 +55,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, pipedData: text, options };
   }
 
-  buildStreamCommand({ text, voice, speed }) {
+  buildStreamCommand({ text, voice, speed }) { // Created by Burgil
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
@@ -67,40 +67,31 @@ class SayPlatformWin32 extends SayPlatformBase {
       psCommand += `$speak.Rate = ${adjustedSpeed};`
     }
     psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
-    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavestream?view=dotnet-plat-ext-8.0
-    // Event handler to handle audio data
-    psCommand += `$handler = {`;
-    psCommand += `  param([object]$sender, [System.Speech.Synthesis.SpeechEventArgs]$eventArgs)`;
-    psCommand += `  $audioChunk = $eventArgs.AudioData`;
-    psCommand += `  $streamAudio.Write($audioChunk, 0, $audioChunk.Length)`;
-    psCommand += `}`;
-    // Attach the event handler
-    psCommand += `Register-ObjectEvent -InputObject $speak -EventName "SpeakProgress" -Action $handler -SourceIdentifier "SpeechEventHandler"`;
-    // Speak the text
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
+    psCommand += `$handler = { param([object]$sender, [System.Speech.Synthesis.SpeechEventArgs]$eventArgs); $audioChunk = $eventArgs.AudioData; $streamAudio.Write($audioChunk, 0, $audioChunk.Length); };`;
+    psCommand += `Register-ObjectEvent -InputObject $speak -EventName "SpeakProgress" -Action $handler -SourceIdentifier "SpeechEventHandler";`;
     psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`;
-    // Unregister the event handler
-    psCommand += `Unregister-Event -SourceIdentifier "SpeechEventHandler"`;
-    // Flush and close the stream
-    psCommand += `$streamAudio.Flush()`;
+    psCommand += `Unregister-Event -SourceIdentifier "SpeechEventHandler";`;
+    psCommand += `$streamAudio.Flush();`;
     psCommand += `$streamAudio.Position = 0;`;
-    psCommand += `$streamAudio.ToArray()`;
+    psCommand += `$streamAudio.ToArray();`;
     // console.log("PowerShell Script:", psCommand);
     args.push(psCommand);
     options.shell = true;
     return { command: COMMAND, args, pipedData: text, options };
   }
 
-  runStopCommand () {
+  runStopCommand() {
     this.child.stdin.pause();
     childProcess.exec(`taskkill /pid ${this.child.pid} /T /F`);
   }
 
-  convertSpeed (speed) {
+  convertSpeed(speed) {
     // Overriden to map playback speed (as a ratio) to Window's values (-10 to 10, zero meaning x1.0)
     return Math.max(-10, Math.min(Math.round((9.0686 * Math.log(speed)) - 0.1806), 10));
   }
 
-  getVoices () {
+  getVoices() {
     let args = [];
     let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
     psCommand += 'Add-Type -AssemblyName System.speech;';
