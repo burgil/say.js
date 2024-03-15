@@ -54,7 +54,7 @@ class SayPlatformBase {
       // })
       const audioDataHandler = ({ uniqueId, audioBuffer }) => {
         if (uniqueId === my_uuid) {
-          // Do something with the received audio data in the scope of streamRealTime
+          // Do something with the received audio data
           console.log('Received audio data for ID', uniqueId, ':', audioBuffer);
           resolve(audioBuffer)
           // Remove the event listener after processing the data once

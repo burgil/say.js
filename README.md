@@ -57,17 +57,6 @@ async function main() {
   }
 }
 main();
-
-// Stream spoken audio in real time
-const audioStream = [];
-say.streamRealTime("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (data) => {
-    console.log(data)
-    audioStream.push(data);
-}, () => {
-    console.log("Finished!");
-}, (err) => {
-    console.error(err);
-});
 ```
 
 ## Express JS Examples
@@ -100,15 +89,6 @@ say.export(text, voice || null, speed || null, filename, callback || null)
 
 ```javascript
 say.stream(text, voice || null, speed || null)
-```
-
-#### Stream Audio in Real Time:
-
-* Windows Only
-* Speed: 1 = 100%, 0.5 = 50%, 2 = 200%, etc
-
-```javascript
-say.streamRealTime(text, voice || null, speed || null, data_callback || null, finish_callback || null, error_callback || null)
 ```
 
 #### Stop Speaking:
@@ -153,11 +133,11 @@ node ./examples/win32-basic-callback.js
 
 Unfortunately every feature isn't supported on every platform. PR's welcome!
 
-Platform | Speak | Export | Stop | Speed | Voice | List | Stream | StreamRealTime
+Platform | Speak | Export | Stop | Speed | Voice | List | Stream
 ---------|-------|--------|------|-------|-------|------|-------|----------------
-macOS    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign: | :no_entry_sign:
-Linux    | :white_check_mark: | :no_entry_sign:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign: | :no_entry_sign:
-Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
+macOS    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
+Linux    | :white_check_mark: | :no_entry_sign:    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :no_entry_sign: | :no_entry_sign:
+Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:
 
 
 ## Requirements
@@ -184,7 +164,7 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 ### Update 14: Currently I am implementing front end and back end examples using express js for the new streaming and streaming in real time features!
 
-### Update 13: Finished adding streamRealTime!
+### Update 13: Finished adding streaming in real time!
 
 ### Update 12: Ignored CHCP logs caused by utf8 support
 
@@ -192,7 +172,7 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 ### Update 10: Added expressjs examples!
 
-### Update 9: Ok so it works, But it's kind of slow, And it returns a buffer not a Uint8Array, I wonder how that will affect us later on, And I found a way to make it faster! I will add another function now called streamRealTime and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
+### Update 9: Ok so it works, But it's kind of slow, And it returns a buffer not a Uint8Array, I wonder how that will affect us later on, And I found a way to make it faster! I will add another function now called streaming in real time and two different examples just in-case it will not work and I will not feel like finishing it, at least I will have it in slow mode then, but the idea behind my logic is to use a callback function that hooks into the this.child.stdout.on('data', callback) and pipe it directly via expressjs for example.
 
 ### Update 8: Trying to return Uint8Array, when it works I will create an example express.js and a frontend no worries!
 

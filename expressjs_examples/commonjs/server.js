@@ -2,7 +2,6 @@ const say = require('say');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const { PassThrough } = require('stream');
 const app = express();
 app.use(cors({
     origin: '*', // Allows access to all origins! - Insecure - Replace with site url in real world applications - http://example.com
@@ -46,67 +45,6 @@ app.post('/tts-stream', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while generating speech.' });
     }
 });
-
-// Route for text-to-speech streaming in real time - fast
-app.post('/tts-stream-real-time', async (req, res) => {
-    const { text, voice } = req.body;
-    try {
-        say.streamRealTime(text, voice, 1,
-            // Data callback
-            (data) => {
-                res.write(`${data},`);
-            },
-            // Finish callback
-            () => {
-                // End the response when speech is complete
-                res.end();
-            },
-            // Error callback
-            (err) => {
-                // Handle any errors during streaming
-                console.error('Error:', err);
-                res.status(500).json({ error: 'An error occurred while generating speech.' });
-            }
-        );
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({ error: 'An error occurred while generating speech.' });
-    }
-});
-
-// Route for text-to-speech streaming in real time - PassThrough
-// app.post('/tts-stream-real-time', async (req, res) => {
-//     const { text, voice } = req.body;
-//     try {
-//         const passThroughStream = new PassThrough();
-//         // Stream spoken audio in real-time
-//         say.streamRealTime(text, voice,
-//             // Data callback
-//             (data) => {
-//                 // Write data to the PassThrough stream
-//                 passThroughStream.write(data.toString());
-//             },
-//             // Finish callback
-//             () => {
-//                 // End the PassThrough stream when speech is complete
-//                 passThroughStream.end();
-//             },
-//             // Error callback
-//             (err) => {
-//                 // Handle any errors during streaming
-//                 console.error('Error:', err);
-//                 res.status(500).json({ error: 'An error occurred while generating speech.' });
-//             }
-//         );
-//         // Set the response headers
-//         res.setHeader('Content-Type', 'audio/wav');
-//         // Pipe the PassThrough stream to the response
-//         passThroughStream.pipe(res);
-//     } catch (err) {
-//         console.error('Error:', err);
-//         res.status(500).json({ error: 'An error occurred while generating speech.' });
-//     }
-// });
 
 app.get('/voices', async function (req, res) {
     say.getInstalledVoices((err, voices) => {
