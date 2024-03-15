@@ -152,13 +152,18 @@ class SayPlatformBase {
       this.child = childProcess.spawn(command, args, options)
       this.child.stdin.setEncoding('utf-8')
       this.child.stderr.setEncoding('utf-8')
-      let audioStream = Buffer.alloc(0)
+      // let audioStream = Buffer.alloc(0)
+      const finalArray = [];
       let ignoreCHCP = true;
       this.child.stdout.on('data', data => {
         if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
           if (ignoreCHCP) ignoreCHCP = false;
           // console.log('Output from PowerShell:', data.toString());
-          audioStream = Buffer.concat([audioStream, data])
+          // audioStream = Buffer.concat([audioStream, data])
+          for (const audioBit of data.split('\r\n')) {
+              finalArray.push(+audioBit);
+              // console.log(audioBit);
+          }
         }
       })
       this.child.stderr.on('data', data => {
@@ -169,7 +174,7 @@ class SayPlatformBase {
       this.child.addListener('exit', (code, signal) => {
         if (code === null || signal !== null) return reject(new Error(`say.stream(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
         this.child = null
-        resolve(audioStream)
+        resolve(finalArray)
       })
     });
   }
