@@ -34,39 +34,6 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$streamAudio.Flush();`;
     psCommand += `$streamAudio.Position = 0;`;
     psCommand += `$audioBytes = $streamAudio.ToArray();`;
-    // Send audio data to the Node.js server via a socket connection
-    psCommand += `$uniqueId = [System.Text.Encoding]::UTF8.GetBytes('${uuid}');`; // [System.Guid]::NewGuid().ToString()
-    psCommand += `$client = New-Object System.Net.Sockets.TcpClient('127.0.0.1', 42022);`; // Create a new TCP client object
-    psCommand += `$stream = $client.GetStream();`;
-    psCommand += `$stream.Write($uniqueId, 0, $uniqueId.Length);`; // Send the unique identifier
-    psCommand += `$stream.Write($audioBytes, 0, $audioBytes.Length);`; // Send audio data
-    psCommand += `$stream.Close();`; // Close the stream
-    psCommand += `$client.Close();`; // Close the client connection
-    psCommand += `$speak.Dispose();`;
-    psCommand += `$streamAudio.Dispose();`;
-    // console.log("PowerShell Script:", psCommand);
-    options.shell = true;
-    args.push(psCommand);
-    return { command: COMMAND, args, options };
-  }
-
-  buildStreamRealTimeCommand({ uuid, text, voice, speed }) { // Created by Burgil
-    let args = [];
-    let options = {};
-    let psCommand = `chcp 65001;`; // Change PowerShell encoding to utf-8
-    psCommand += `$text = '${text.replace(/'/g, "''")}';`;
-    psCommand += `$voice = '${voice || ''}';`; // Voice is optional
-    psCommand += `$speed = ${this.convertSpeed(speed || 1)};`; // Speed is optional
-    psCommand += `$audioBytes = Add-Type -AssemblyName System.speech;`;
-    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
-    psCommand += `if ($voice) { $speak.SelectVoice($voice) };`; // Select voice if provided
-    psCommand += `$speak.Rate = $speed;`; // Set speed if provided
-    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
-    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
-    psCommand += `$speak.Speak($text);`;
-    psCommand += `$streamAudio.Flush();`;
-    psCommand += `$streamAudio.Position = 0;`;
-    psCommand += `$audioBytes = $streamAudio.ToArray();`;
     //   psCommand += `$chunkSize = 256;`; // Adjust the chunk size as needed
     //   psCommand += `$chunks = [System.Collections.Generic.List[string]]::new();`;
     //   psCommand += `for ($i = 0; $i -lt $textToSpeak.Length; $i += $chunkSize) {`;
