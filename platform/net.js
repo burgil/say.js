@@ -1,3 +1,4 @@
+const net = require('net');
 const EventEmitter = require('events');
 
 const server = new net.Server();
