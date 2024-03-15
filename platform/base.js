@@ -52,10 +52,11 @@ class SayPlatformBase {
       //     }
       //   }
       // })
-      const audioDataHandler = ({ uniqueId, audioChunks }) => {
+      const audioDataHandler = ({ uniqueId, audioBuffer }) => {
         if (uniqueId === my_uuid) {
           // Do something with the received audio data in the scope of streamRealTime
-          console.log('Received audio data for ID', uniqueId, ':', audioChunks);
+          console.log('Received audio data for ID', uniqueId, ':', audioBuffer);
+          resolve(audioBuffer)
           // Remove the event listener after processing the data once
           eventEmitter.removeListener('audioData', audioDataHandler);
         }
@@ -69,7 +70,6 @@ class SayPlatformBase {
       this.child.addListener('exit', (code, signal) => {
         if (code === null || signal !== null) return reject(new Error(`say.stream(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
         this.child = null
-        resolve(audioStream)
       })
     });
   }
@@ -111,11 +111,11 @@ class SayPlatformBase {
     this.child = childProcess.spawn(command, args, options);
     this.child.stdin.setEncoding('utf-8');
     this.child.stderr.setEncoding('utf-8');
-    const audioStream = [];
-    const audioDataHandler = ({ uniqueId, audioChunks }) => {
+    const audioDataHandler = ({ uniqueId, audioBuffer }) => {
       if (uniqueId === my_uuid) {
         // Do something with the received audio data in the scope of streamRealTime
-        console.log('Received audio data for ID', uniqueId, ':', audioChunks);
+        console.log('Received audio data for ID', uniqueId, ':', audioBuffer);
+        resolve(audioBuffer)
         // Remove the event listener after processing the data once
         eventEmitter.removeListener('audioData', audioDataHandler);
       }
@@ -129,7 +129,7 @@ class SayPlatformBase {
     this.child.addListener('exit', (code, signal) => {
       if (code === null || signal !== null) return reject(new Error(`say.streamRealTime(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
       this.child = null
-      finish_callback(audioStream)
+      finish_callback()
     })
   }
 
