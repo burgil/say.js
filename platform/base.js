@@ -2,6 +2,7 @@ const childProcess = require('child_process')
 const once = require('one-time')
 const symbolTTS = require('../symbol-tts.js')
 const eventEmitter = require('./net.js');
+const { v4: uuidv4 } = require('uuid');
 
 class SayPlatformBase {
   constructor() {
