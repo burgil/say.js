@@ -10,12 +10,11 @@
         <textarea id="textInput" placeholder="Enter text">hello world how are you doing today? I am your personal assistant</textarea><br>
         <select id="voiceSelect"></select><br>
         <button id="playButton">Play</button>
-
         <script>
             const playButton = document.getElementById('playButton');
-            const stopButton = document.getElementById('stopButton');
             const textInput = document.getElementById('textInput');
             const voiceSelect = document.getElementById('voiceSelect');
+
             // Created by Burgil
             fetch('http://localhost/voices').then(response => {
                 if (!response.ok) {
@@ -35,6 +34,8 @@
                 console.error('There was a problem fetching available voices:', error);
             });
 
+            // Created by Burgil
+
             // Play button click event listener
             playButton.addEventListener('click', async () => {
                 const text = textInput.value;
@@ -50,13 +51,17 @@
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    const audioContext = new AudioContext();
-                    const audioStream = audioContext.createMediaElementSource(document.createElement('audio'));
-                    audioStream.connect(audioContext.destination);
-                    const audioBlob = await response.blob();
-                    const audioBlobURL = URL.createObjectURL(audioBlob);
-                    audioStream.mediaElement.src = audioBlobURL;
-                    audioStream.mediaElement.play();
+                    const responseData = await response.json();
+                    let audioData = new Uint8Array(Object.values(responseData).join().split(','));
+                    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    source = audioCtx.createBufferSource();
+                    audioCtx.decodeAudioData(audioData.buffer.slice(0), function (buffer) {
+                        source.buffer = buffer;
+                        source.connect(audioCtx.destination);
+                        source.start(0);
+                    }, function (e) {
+                        console.log("Error with decoding audio data: " + e.err);
+                    });
                 } catch (error) {
                     console.error('There was a problem playing audio:', error);
                 }
