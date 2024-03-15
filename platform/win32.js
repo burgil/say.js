@@ -44,6 +44,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$client.Close();`; // Close the client connection
     psCommand += `$speak.Dispose();`;
     psCommand += `$streamAudio.Dispose();`;
+    // console.log("PowerShell Script:", psCommand);
     options.shell = true;
     args.push(psCommand);
     return { command: COMMAND, args, options };
