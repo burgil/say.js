@@ -211,6 +211,11 @@ class SayPlatformBase {
         error_callback(error);
       })
     }
+    this.child = childProcess.spawn(command, args, options);
+    this.child.stdin.setEncoding('utf-8');
+    this.child.stderr.setEncoding('utf-8');
+    const audioStream = [];
+    let ignoreCHCP = true;
     const client = new net.Socket();
     console.log('test');
     client.connect(12345, '127.0.0.1', () => {
@@ -222,11 +227,6 @@ class SayPlatformBase {
     client.on('close', () => {
         console.log('Connection closed');
     });
-    this.child = childProcess.spawn(command, args, options);
-    this.child.stdin.setEncoding('utf-8');
-    this.child.stderr.setEncoding('utf-8');
-    const audioStream = [];
-    let ignoreCHCP = true;
     this.child.stdout.on('data', data => {
       if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
         if (ignoreCHCP) ignoreCHCP = false;
