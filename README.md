@@ -126,7 +126,7 @@ say.getInstalledVoices(callback)
 ### Testing examples:
 
 ```bash
-git clonse https://github.com/burgil/say.js/
+git clone https://github.com/burgil/say.js/
 cd say.js
 npm install
 
