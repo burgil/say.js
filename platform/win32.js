@@ -111,7 +111,6 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, options };
   }
 
-
   // buildStreamRealTimeWebServerCommand({ text, voice, speed }) { // Created by Burgil
   //   let args = [];
   //   let options = {};
