@@ -70,7 +70,7 @@ app.post('/tts-stream-real-time', async (req, res) => {
             // Data callback
             (data) => {
                 // Write data to the PassThrough stream
-                passThroughStream.write(data);
+                passThroughStream.write(data.toString());
             },
             // Finish callback
             () => {
