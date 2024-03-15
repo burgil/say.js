@@ -38,7 +38,7 @@ class SayPlatformBase {
       this.child = childProcess.spawn(command, args, options);
       this.child.stdin.setEncoding('utf-8');
       this.child.stderr.setEncoding('utf-8');
-      const audioStream = [];
+      // const audioStream = [];
       // The Old Way:
       // let ignoreCHCP = true;
       // this.child.stdout.on('data', data => {

@@ -35,7 +35,7 @@ server.on('connection', (socket) => { // Scope is per client
 server.on('error', (err) => {
     console.error('Server error:', err);
 });
-server.listen(42022, '127.0.0.1', () => {
+server.listen(42022, '127.0.0.1', () => { // Make sure to block this port to the outside world on production
     console.log('Local Server listening on port 42022');
 });
 
