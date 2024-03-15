@@ -88,11 +88,11 @@
                     // buffer = await audioCtx.decodeAudioData(await response.arrayBuffer());
 
                     const responseData = await response.json();
-                    console.log('responseData', responseData);
-                    console.log('Object.values', Object.values(responseData).join().split(','));
+                    // console.log('responseData', responseData);
+                    // console.log('Object.values', Object.values(responseData).join().split(','));
 
                     let audioData = new Uint8Array(Object.values(responseData).join().split(','));
-                    console.log('audioData', audioData);
+                    // console.log('audioData', audioData);
 
                     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                     source = audioCtx.createBufferSource();
