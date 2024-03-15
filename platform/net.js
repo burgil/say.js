@@ -22,7 +22,7 @@ server.on('connection', (socket) => { // Scope is per client
         // When the data transmission ends, concatenate the audio chunks into a buffer
         const audioBuffer = Buffer.concat(audioChunks);
         console.log('1- Received audio data for ID', uniqueId, ':', audioBuffer);
-        console.log('2- Received audio chunks for ID', uniqueId, ':', audioChunks);
+        // console.log('2- Received audio chunks for ID', uniqueId, ':', audioChunks);
         // Emit an event with the audio data and uniqueId
         eventEmitter.emit('audioData', { uniqueId, audioBuffer });
         // Reset variables for the next request
