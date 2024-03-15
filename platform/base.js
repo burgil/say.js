@@ -3,8 +3,29 @@ const once = require('one-time')
 const symbolTTS = require('../symbol-tts.js')
 const net = require('net');
 
+function connectToService(callback, port) {
+  const client = new net.Socket();
+  const retryConnection = () => {
+    client.connect(port, '127.0.0.1', () => {
+      console.log('Connected to service');
+      callback(null, client);
+    });
+    client.on('error', (error) => {
+      if (error.code === 'ECONNREFUSED') {
+        console.log('Connection refused, retrying...');
+        setTimeout(retryConnection, 1000); // Retry after 1 second
+      } else {
+        console.error('Error connecting to service:', error);
+        callback(error);
+      }
+    });
+  };
+
+  retryConnection();
+}
+
 class SayPlatformBase {
-  constructor () {
+  constructor() {
     this.child = null
     this.baseSpeed = 0
   }
@@ -17,9 +38,9 @@ class SayPlatformBase {
    * @param {number|null} speed Speed of text (e.g. 1.0 for normal, 0.5 half, 2.0 double)
    * @param {Function|null} callback A callback of type function(err) to return.
    */
-  speak (text, voice, speed, callback) {
+  speak(text, voice, speed, callback) {
     if (typeof callback !== 'function') {
-      callback = () => {}
+      callback = () => { }
     }
 
     callback = once(callback)
@@ -70,9 +91,9 @@ class SayPlatformBase {
    * @param {string} filename Path to file to write audio to, e.g. "greeting.wav"
    * @param {Function|null} callback A callback of type function(err) to return.
    */
-  export (text, voice, speed, filename, callback) {
+  export(text, voice, speed, filename, callback) {
     if (typeof callback !== 'function') {
-      callback = () => {}
+      callback = () => { }
     }
 
     callback = once(callback)
@@ -134,7 +155,7 @@ class SayPlatformBase {
    * @param {string|null} voice Name of voice to be spoken with
    * @param {number|null} speed Speed of text (e.g. 1.0 for normal, 0.5 half, 2.0 double)
    */
-  stream (text, voice, speed) {
+  stream(text, voice, speed) {
     return new Promise((resolve, reject) => {
       if (!text) {
         reject(new TypeError('say.stream(): must provide text parameter'))
@@ -160,9 +181,9 @@ class SayPlatformBase {
           if (ignoreCHCP) ignoreCHCP = false;
           // console.log('Output from PowerShell:', data.toString());
           for (const audioBit of data.toString().split('\r\n')) {
-              if (audioBit.trim() !== '') {
-                audioStream.push(parseInt(audioBit.trim()));
-              }
+            if (audioBit.trim() !== '') {
+              audioStream.push(parseInt(audioBit.trim()));
+            }
           }
         }
       })
@@ -189,11 +210,11 @@ class SayPlatformBase {
    * @param {Function|null} finish_callback A callback of type function to return all the data.
    * @param {Function|null} error_callback A callback of type function(err) to return.
    */
-  streamRealTime (text, voice, speed, data_callback, finish_callback, error_callback) {
-    if (typeof data_callback !== 'function') data_callback = () => {};
-    if (typeof finish_callback !== 'function') finish_callback = () => {};
+  streamRealTime(text, voice, speed, data_callback, finish_callback, error_callback) {
+    if (typeof data_callback !== 'function') data_callback = () => { };
+    if (typeof finish_callback !== 'function') finish_callback = () => { };
     finish_callback = once(finish_callback);
-    if (typeof error_callback !== 'function') error_callback = () => {};
+    if (typeof error_callback !== 'function') error_callback = () => { };
     error_callback = once(error_callback);
     if (!text) {
       return setImmediate(() => {
@@ -216,27 +237,38 @@ class SayPlatformBase {
     this.child.stderr.setEncoding('utf-8');
     const audioStream = [];
     let ignoreCHCP = true;
-    const client = new net.Socket();
-    console.log('test');
-    client.connect(12345, '127.0.0.1', () => {
-        console.log('Connected');
-    });
-    client.on('data', (data) => {
-        console.log("Incoming Data:", data)
-    });
-    client.on('close', () => {
-        console.log('Connection closed');
-    });
+    const onData = (data) => {
+      console.log("Incoming Data:", data)
+    };
+    const onClose = () => {
+      console.log('Connection closed');
+    };
+    connectToService((error, client) => {
+      if (error) {
+        console.error('Failed to connect to service:', error);
+        // Handle the error appropriately, e.g., exit the application
+      } else {
+        // Connection successful, proceed with your logic using the 'client' object
+        client.on('data', onData);
+        client.on('close', onClose);
+
+        // Add cleanup logic when the client disconnects
+        client.on('close', () => {
+          client.removeListener('data', onData);
+          client.removeListener('close', onClose);
+        });
+      }
+    }, 12345);
     this.child.stdout.on('data', data => {
       if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
         if (ignoreCHCP) ignoreCHCP = false;
         // console.log('Output from PowerShell:', data.toString());
         for (const audioBit of data.toString().split('\r\n')) {
-            if (audioBit.trim() !== '') {
-              const bit = parseInt(audioBit.trim());
-              data_callback(bit);
-              audioStream.push(bit);
-            }
+          if (audioBit.trim() !== '') {
+            const bit = parseInt(audioBit.trim());
+            data_callback(bit);
+            audioStream.push(bit);
+          }
         }
       }
     })
@@ -259,9 +291,9 @@ class SayPlatformBase {
    *
    * @param {Function|null} callback A callback of type function(err) to return.
    */
-  stop (callback) {
+  stop(callback) {
     if (typeof callback !== 'function') {
-      callback = () => {}
+      callback = () => { }
     }
 
     callback = once(callback)
@@ -279,7 +311,7 @@ class SayPlatformBase {
     callback(null)
   }
 
-  convertSpeed (speed) {
+  convertSpeed(speed) {
     return Math.ceil(this.baseSpeed * speed)
   }
 
@@ -287,9 +319,9 @@ class SayPlatformBase {
    * Get Installed voices on system
    * @param {Function} callback A callback of type function(err,voices) to return.
    */
-  getInstalledVoices (callback) {
+  getInstalledVoices(callback) {
     if (typeof callback !== 'function') {
-      callback = () => {}
+      callback = () => { }
     }
     callback = once(callback)
 
