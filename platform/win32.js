@@ -94,7 +94,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$text = '${text.replace(/'/g, "''")}';`;
     psCommand += `$voice = '${voice || ''}';`; // Voice is optional
     psCommand += `$speed = ${this.convertSpeed(speed || 1)};`; // Speed is optional
-    psCommand += `$audioBytes = Add-Type -AssemblyName System.speech;`;
+    psCommand += `$audioBytes = (Add-Type -AssemblyName System.speech;`;
     psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
     psCommand += `if ($voice) { $speak.SelectVoice($voice) };`; // Select voice if provided
     psCommand += `$speak.Rate = $speed;`; // Set speed if provided
@@ -104,14 +104,17 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$streamAudio.Flush();`;
     psCommand += `$streamAudio.Position = 0;`;
     psCommand += `$audioBytes = $streamAudio.ToArray();`;
-    psCommand += `$response = Invoke-WebRequest -Uri "http://localhost:42022/" -Method POST -Body $audioBytes -ContentType "application/octet-stream";`; // Change URL to match your Node.js server endpoint
-    psCommand += `$response.StatusCode;`; // Output status code
-    psCommand += `$speak.Dispose();`;
-    psCommand += `$streamAudio.Dispose();`;
+    // Send audio data to the Node.js server via a socket connection
+    psCommand += `$client = New-Object System.Net.Sockets.TcpClient("127.0.0.1", 42022);`; // Connect to Node.js server
+    psCommand += `$stream = $client.GetStream();`;
+    psCommand += `$stream.Write($audioBytes, 0, $audioBytes.Length);`; // Send audio data
+    psCommand += `$stream.Close();`; // Close the stream
+    psCommand += `$client.Close();`; // Close the client connection
     options.shell = true;
     args.push(psCommand);
     return { command: COMMAND, args, options };
-  }
+}
+
 
   // buildStreamRealTimeWebServerCommand({ text, voice, speed }) { // Created by Burgil
   //   let args = [];
