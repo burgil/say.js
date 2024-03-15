@@ -12,7 +12,7 @@ server.on('connection', (socket) => { // Scope is per client
         // If uniqueId is not yet received, assume the data is the uniqueId
         if (!uniqueId) {
             uniqueId = chunk.toString().trim();
-            // console.log('Received unique ID:', uniqueId);
+            console.log('Received unique ID:', uniqueId);
         } else {
             // Otherwise, append the audio data to audioChunks
             audioChunks.push(chunk);
@@ -24,7 +24,7 @@ server.on('connection', (socket) => { // Scope is per client
         // console.log('1- Received audio data for ID', uniqueId); // , ':', audioBuffer
         // console.log('2- Received audio chunks for ID', uniqueId, ':', audioChunks);
         // Emit an event with the audio data and uniqueId
-        eventEmitter.emit('audioData', { uniqueId, audioBuffer });
+        eventEmitter.emit('audioData', { uniqueId, audioChunks });
         // Reset variables for the next request
         uniqueId = undefined;
         audioChunks = [];

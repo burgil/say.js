@@ -52,10 +52,10 @@ class SayPlatformBase {
       //     }
       //   }
       // })
-      const audioDataHandler = ({ uniqueId, audioBuffer }) => {
+      const audioDataHandler = ({ uniqueId, audioChunks }) => {
         if (uniqueId === my_uuid) {
           // Do something with the received audio data in the scope of streamRealTime
-          console.log('Received audio data for ID', uniqueId, ':', audioBuffer);
+          console.log('Received audio data for ID', uniqueId, ':', audioChunks);
           // Remove the event listener after processing the data once
           eventEmitter.removeListener('audioData', audioDataHandler);
         }
@@ -112,10 +112,10 @@ class SayPlatformBase {
     this.child.stdin.setEncoding('utf-8');
     this.child.stderr.setEncoding('utf-8');
     const audioStream = [];
-    const audioDataHandler = ({ uniqueId, audioBuffer }) => {
+    const audioDataHandler = ({ uniqueId, audioChunks }) => {
       if (uniqueId === my_uuid) {
         // Do something with the received audio data in the scope of streamRealTime
-        console.log('Received audio data for ID', uniqueId, ':', audioBuffer);
+        console.log('Received audio data for ID', uniqueId, ':', audioChunks);
         // Remove the event listener after processing the data once
         eventEmitter.removeListener('audioData', audioDataHandler);
       }
