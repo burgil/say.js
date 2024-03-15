@@ -160,9 +160,12 @@ class SayPlatformBase {
           if (ignoreCHCP) ignoreCHCP = false;
           // console.log('Output from PowerShell:', data.toString());
           // audioStream = Buffer.concat([audioStream, data])
-          for (const audioBit of data.split('\r\n')) {
+          // console.log(typeof data, data.toString())
+          for (const audioBit of data.toString().split('\r\n')) {
               if (audioBit.trim() !== '') {
                 finalArray.push(parseInt(audioBit.trim())); // Parse as integer
+                // console.log(parseInt(audioBit.trim()))
+                // console.log(finalArray)
               }
           }
         }
