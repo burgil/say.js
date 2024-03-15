@@ -94,7 +94,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$text = '${text.replace(/'/g, "''")}';`;
     psCommand += `$voice = '${voice || ''}';`; // Voice is optional
     psCommand += `$speed = ${this.convertSpeed(speed || 1)};`; // Speed is optional
-    psCommand += `$audioBytes = (Add-Type -AssemblyName System.speech;`;
+    psCommand += `$audioBytes = Add-Type -AssemblyName System.speech;`;
     psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
     psCommand += `if ($voice) { $speak.SelectVoice($voice) };`; // Select voice if provided
     psCommand += `$speak.Rate = $speed;`; // Set speed if provided
