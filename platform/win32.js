@@ -12,48 +12,6 @@ class SayPlatformWin32 extends SayPlatformBase {
     this.baseSpeed = BASE_SPEED
   }
 
-  buildSpeakCommand({ text, voice, speed }) {
-    let args = [];
-    let options = {};
-    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;`;
-    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
-    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
-    if (speed) {
-      let adjustedSpeed = this.convertSpeed(speed || 1);
-      psCommand += `$speak.Rate = ${adjustedSpeed};`;
-    }
-    psCommand += `$speak.Speak([Console]::In.ReadToEnd())`;
-    // console.log("PowerShell Script:", psCommand);
-    args.push(psCommand);
-    options.shell = true;
-    return { command: COMMAND, args, pipedData: text, options };
-  }
-
-  buildExportCommand({ text, voice, speed, filename }) {
-    let args = [];
-    let options = {};
-    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;`;
-    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
-    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
-    if (speed) {
-      let adjustedSpeed = this.convertSpeed(speed || 1);
-      psCommand += `$speak.Rate = ${adjustedSpeed};`;
-    }
-    if (!filename) {
-      throw new Error('Filename must be provided in export();');
-    } else {
-      psCommand += `$speak.SetOutputToWaveFile('${filename}');`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
-    }
-    psCommand += `$speak.Speak([Console]::In.ReadToEnd());$speak.Dispose()`;
-    // console.log("PowerShell Script:", psCommand);
-    args.push(psCommand);
-    options.shell = true;
-
-    return { command: COMMAND, args, pipedData: text, options };
-  }
-
   buildStreamCommand({ uuid, text, voice, speed }) { // Created by Burgil
     let args = [];
     let options = {};
@@ -137,6 +95,48 @@ class SayPlatformWin32 extends SayPlatformBase {
     options.shell = true;
     args.push(psCommand);
     return { command: COMMAND, args, options };
+  }
+
+  buildSpeakCommand({ text, voice, speed }) {
+    let args = [];
+    let options = {};
+    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;`;
+    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
+    if (speed) {
+      let adjustedSpeed = this.convertSpeed(speed || 1);
+      psCommand += `$speak.Rate = ${adjustedSpeed};`;
+    }
+    psCommand += `$speak.Speak([Console]::In.ReadToEnd())`;
+    // console.log("PowerShell Script:", psCommand);
+    args.push(psCommand);
+    options.shell = true;
+    return { command: COMMAND, args, pipedData: text, options };
+  }
+
+  buildExportCommand({ text, voice, speed, filename }) {
+    let args = [];
+    let options = {};
+    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    psCommand += `Add-Type -AssemblyName System.speech;`;
+    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
+    if (speed) {
+      let adjustedSpeed = this.convertSpeed(speed || 1);
+      psCommand += `$speak.Rate = ${adjustedSpeed};`;
+    }
+    if (!filename) {
+      throw new Error('Filename must be provided in export();');
+    } else {
+      psCommand += `$speak.SetOutputToWaveFile('${filename}');`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
+    }
+    psCommand += `$speak.Speak([Console]::In.ReadToEnd());$speak.Dispose()`;
+    // console.log("PowerShell Script:", psCommand);
+    args.push(psCommand);
+    options.shell = true;
+
+    return { command: COMMAND, args, pipedData: text, options };
   }
 
   runStopCommand() {
