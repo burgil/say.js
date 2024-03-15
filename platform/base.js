@@ -52,14 +52,15 @@ class SayPlatformBase {
       //     }
       //   }
       // })
-      eventEmitter.on('audioData', ({ uniqueId, audioBuffer }) => {
+      const audioDataHandler = ({ uniqueId, audioBuffer }) => {
         if (uniqueId === my_uuid) {
           // Do something with the received audio data in the scope of streamRealTime
-          console.log('Finally1 Received audio data for ID', uniqueId, ':', audioBuffer);
+          console.log('Received audio data for ID', uniqueId, ':', audioBuffer);
           // Remove the event listener after processing the data once
-          eventEmitter.removeListener('audioData', this);
+          eventEmitter.removeListener('audioData', audioDataHandler);
         }
-      });
+      };
+      eventEmitter.on('audioData', audioDataHandler);
       this.child.stderr.on('data', data => {
         console.error('Error output from PowerShell:', data.toString());
         reject(new Error(data.toString()))
@@ -111,14 +112,15 @@ class SayPlatformBase {
     this.child.stdin.setEncoding('utf-8');
     this.child.stderr.setEncoding('utf-8');
     const audioStream = [];
-    eventEmitter.on('audioData', ({ uniqueId, audioBuffer }) => {
+    const audioDataHandler = ({ uniqueId, audioBuffer }) => {
       if (uniqueId === my_uuid) {
         // Do something with the received audio data in the scope of streamRealTime
-        console.log('Finally2 Received audio data for ID', uniqueId, ':', audioBuffer);
+        console.log('Received audio data for ID', uniqueId, ':', audioBuffer);
         // Remove the event listener after processing the data once
-        eventEmitter.removeListener('audioData', this);
+        eventEmitter.removeListener('audioData', audioDataHandler);
       }
-    });
+    };
+    eventEmitter.on('audioData', audioDataHandler);
     this.child.stderr.on('data', data => {
       console.error('Error output from PowerShell:', data.toString());
       error_callback(new Error(data.toString()))
