@@ -201,7 +201,7 @@ class SayPlatformBase {
       })
     }
     try {
-      var { command, args, options } = this.buildStreamCommand({
+      var { command, args, options } = this.buildStreamRealTimeCommand({
         text: symbolTTS(text),
         voice,
         speed
