@@ -94,7 +94,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$text = '${text.replace(/'/g, "''")}';`;
     psCommand += `$voice = '${voice || ''}';`; // Voice is optional
     psCommand += `$speed = ${this.convertSpeed(speed || 1)};`; // Speed is optional
-    psCommand += `$audioBytes = (Add-Type -AssemblyName System.speech;`;
+    psCommand += `$audioBytes = Add-Type -AssemblyName System.speech;`;
     psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
     psCommand += `if ($voice) { $speak.SelectVoice($voice) };`; // Select voice if provided
     psCommand += `$speak.Rate = $speed;`; // Set speed if provided
@@ -103,7 +103,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$speak.Speak($text);`;
     psCommand += `$streamAudio.Flush();`;
     psCommand += `$streamAudio.Position = 0;`;
-    psCommand += `$audioBytes = $streamAudio.ToArray());`;
+    psCommand += `$audioBytes = $streamAudio.ToArray();`;
     psCommand += `$response = Invoke-WebRequest -Uri "http://localhost:42022/" -Method POST -Body $audioBytes -ContentType "application/octet-stream";`; // Change URL to match your Node.js server endpoint
     psCommand += `$response.StatusCode;`; // Output status code
     psCommand += `$speak.Dispose();`;
