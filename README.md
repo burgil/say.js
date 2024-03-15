@@ -59,14 +59,14 @@ async function main() {
 main();
 
 // Stream spoken audio in real time
-let audioStream = Buffer.alloc(0);
+const audioStream = [];
 say.streamRealTime("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (data) => {
     console.log(data)
-    audioStream = Buffer.concat([audioStream, data])
-}, (finalStream) => {
-    console.log("Finished!")
+    audioStream.push(data);
+}, (finalAudioStream) => {
+    console.log("Finished!", finalAudioStream.length === audioStream.length, finalAudioStream.length, audioStream.length, finalAudioStream, audioStream);
 }, (err) => {
-    console.error(err)
+    console.error(err);
 });
 ```
 

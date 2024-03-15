@@ -149,23 +149,18 @@ class SayPlatformBase {
         reject(error)
         return
       }
-      this.child = childProcess.spawn(command, args, options)
-      this.child.stdin.setEncoding('utf-8')
-      this.child.stderr.setEncoding('utf-8')
-      // let audioStream = Buffer.alloc(0)
-      const finalArray = [];
+      this.child = childProcess.spawn(command, args, options);
+      this.child.stdin.setEncoding('utf-8');
+      this.child.stderr.setEncoding('utf-8');
+      const audioStream = [];
       let ignoreCHCP = true;
       this.child.stdout.on('data', data => {
         if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
           if (ignoreCHCP) ignoreCHCP = false;
           // console.log('Output from PowerShell:', data.toString());
-          // audioStream = Buffer.concat([audioStream, data])
-          // console.log(typeof data, data.toString())
           for (const audioBit of data.toString().split('\r\n')) {
               if (audioBit.trim() !== '') {
-                finalArray.push(parseInt(audioBit.trim())); // Parse as integer
-                // console.log(parseInt(audioBit.trim()))
-                // console.log(finalArray)
+                audioStream.push(parseInt(audioBit.trim()));
               }
           }
         }
@@ -178,7 +173,7 @@ class SayPlatformBase {
       this.child.addListener('exit', (code, signal) => {
         if (code === null || signal !== null) return reject(new Error(`say.stream(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
         this.child = null
-        resolve(finalArray)
+        resolve(audioStream)
       })
     });
   }
@@ -209,23 +204,28 @@ class SayPlatformBase {
         text: symbolTTS(text),
         voice,
         speed
-      })
+      });
     } catch (error) {
       return setImmediate(() => {
-        error_callback(error)
+        error_callback(error);
       })
     }
-    this.child = childProcess.spawn(command, args, options)
-    this.child.stdin.setEncoding('utf-8')
-    this.child.stderr.setEncoding('utf-8')
-    let audioStream = Buffer.alloc(0);
+    this.child = childProcess.spawn(command, args, options);
+    this.child.stdin.setEncoding('utf-8');
+    this.child.stderr.setEncoding('utf-8');
+    const audioStream = [];
     let ignoreCHCP = true;
     this.child.stdout.on('data', data => {
       if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
         if (ignoreCHCP) ignoreCHCP = false;
         // console.log('Output from PowerShell:', data.toString());
-        data_callback(data.toString());
-        audioStream = Buffer.concat([audioStream, data])
+        for (const audioBit of data.toString().split('\r\n')) {
+            if (audioBit.trim() !== '') {
+              const bit = parseInt(audioBit.trim());
+              data_callback(bit);
+              audioStream.push(bit);
+            }
+        }
       }
     })
     this.child.stderr.on('data', data => {
