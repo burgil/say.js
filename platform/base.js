@@ -24,47 +24,6 @@ server.listen(42022, '127.0.0.1', () => {
   console.log('Local Server listening on port 42022');
 });
 
-// New Retry:
-// function connectToService(callback, server) {
-//   const client = new net.Socket();
-//   client.connect({ port: 12345, host: '127.0.0.1' }, () => {
-//     console.log('Connected to service');
-//     callback(null, client);
-//   });
-//   client.on('error', (error) => {
-//     if (error.code === 'ECONNREFUSED') {
-//       console.log('Connection refused, retrying...');
-//       setTimeout(() => {
-//         connectToService(callback, server); // Retry connection
-//       }, 1000); // Retry after 1 second
-//     } else {
-//       console.error('Error connecting to service:', error);
-//       callback(error);
-//     }
-//   });
-// }
-
-// Lame Retry:
-// function connectToService(callback, port) {
-//   const client = new net.Socket();
-//   const retryConnection = () => {
-//     client.connect(port, '127.0.0.1', () => {
-//       console.log('Connected to service');
-//       callback(null, client);
-//     });
-//     client.on('error', (error) => {
-//       if (error.code === 'ECONNREFUSED') {
-//         console.log('Connection refused, retrying...');
-//         // setTimeout(retryConnection, 1000); // Retry after 1 second
-//       } else {
-//         console.error('Error connecting to service:', error);
-//         callback(error);
-//       }
-//     });
-//   };
-//   retryConnection();
-// }
-
 class SayPlatformBase {
   constructor() {
     this.child = null
@@ -289,80 +248,6 @@ class SayPlatformBase {
       finish_callback(audioStream)
     })
   }
-  // streamRealTimeWebServer(text, voice, speed, data_callback, finish_callback, error_callback) {
-  //   if (typeof data_callback !== 'function') data_callback = () => { };
-  //   if (typeof finish_callback !== 'function') finish_callback = () => { };
-  //   finish_callback = once(finish_callback);
-  //   if (typeof error_callback !== 'function') error_callback = () => { };
-  //   error_callback = once(error_callback);
-  //   if (!text) {
-  //     return setImmediate(() => {
-  //       error_callback(new TypeError('say.streamRealTime(): must provide text parameter'))
-  //     })
-  //   }
-  //   try {
-  //     var { command, args, options } = this.buildStreamRealTimeCommand({
-  //       text: symbolTTS(text),
-  //       voice,
-  //       speed
-  //     });
-  //   } catch (error) {
-  //     return setImmediate(() => {
-  //       error_callback(error);
-  //     })
-  //   }
-  //   this.child = childProcess.spawn(command, args, options);
-  //   this.child.stdin.setEncoding('utf-8');
-  //   this.child.stderr.setEncoding('utf-8');
-  //   const audioStream = [];
-  //   let ignoreCHCP = true;
-  //   const onData = (data) => {
-  //     console.log("Incoming Data:", data)
-  //   };
-  //   const onClose = () => {
-  //     console.log('Connection closed');
-  //   };
-  //   setTimeout(function () {
-  //     connectToService((error, client) => {
-  //       if (error) {
-  //         console.error('Failed to connect to service:', error);
-  //         // Handle the error appropriately, e.g., exit the application
-  //       } else {
-  //         // Connection successful, proceed with your logic using the 'client' object
-  //         client.on('data', onData);
-  //         client.on('close', onClose);
-  //         // Add cleanup logic when the client disconnects
-  //         client.on('close', () => {
-  //           client.removeListener('data', onData);
-  //           client.removeListener('close', onClose);
-  //         });
-  //       }
-  //     }, 12345); // port conflict requires attention
-  //   }, 1000);
-  //   this.child.stdout.on('data', data => {
-  //     if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
-  //       if (ignoreCHCP) ignoreCHCP = false;
-  //       // console.log('Output from PowerShell:', data.toString());
-  //       for (const audioBit of data.toString().split('\r\n')) {
-  //         if (audioBit.trim() !== '') {
-  //           const bit = parseInt(audioBit.trim());
-  //           data_callback(bit);
-  //           audioStream.push(bit);
-  //         }
-  //       }
-  //     }
-  //   })
-  //   this.child.stderr.on('data', data => {
-  //     console.error('Error output from PowerShell:', data.toString());
-  //     error_callback(new Error(data.toString()))
-  //   })
-  //   this.child.stdin.end()
-  //   this.child.addListener('exit', (code, signal) => {
-  //     if (code === null || signal !== null) return reject(new Error(`say.streamRealTime(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
-  //     this.child = null
-  //     finish_callback(audioStream)
-  //   })
-  // }
 
   /**
    * Stops currently playing audio. There will be unexpected results if multiple audios are being played at once
