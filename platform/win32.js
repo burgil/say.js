@@ -58,36 +58,41 @@ class SayPlatformWin32 extends SayPlatformBase {
   buildStreamCommand({ text, voice, speed }) { // Created by Burgil
     let args = [];
     let options = {};
-    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
-    psCommand += `Add-Type -AssemblyName System.speech;`;
+    let psCommand = `chcp 65001;`; // Change PowerShell encoding to utf-8
+    psCommand += `$text = '${text.replace(/'/g, "''")}';`;
+    psCommand += `$voice = '${voice || ''}';`; // Voice is optional
+    psCommand += `$speed = ${this.convertSpeed(speed || 1)};`; // Speed is optional
+    psCommand += `$audioBytes = Add-Type -AssemblyName System.speech;`;
     psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
-    if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
-    if (speed) {
-      let adjustedSpeed = this.convertSpeed(speed || 1);
-      psCommand += `$speak.Rate = ${adjustedSpeed};`
-    }
+    psCommand += `if ($voice) { $speak.SelectVoice($voice) };`; // Select voice if provided
+    psCommand += `$speak.Rate = $speed;`; // Set speed if provided
     psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
     // psCommand += `$formatInfo = New-Object System.Speech.AudioFormat.SpeechAudioFormatInfo(16000, [System.Speech.AudioFormat.AudioBitsPerSample]::Sixteen, [System.Speech.AudioFormat.AudioChannel]::Mono);`;
     // psCommand += `$speak.SetOutputToAudioStream($streamAudio, $formatInfo);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtoaudiostream?view=dotnet-plat-ext-8.0
     psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
     // psCommand += `$handler = { param([object]$sender, [System.Speech.Synthesis.SpeechEventArgs]$eventArgs); $audioChunk = $eventArgs.AudioData; $streamAudio.Write($audioChunk, 0, $audioChunk.Length); };`;
     // psCommand += `Register-ObjectEvent -InputObject $speak -EventName "SpeakProgress" -Action $handler -SourceIdentifier "SpeechEventHandler";`;
-    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`;
+    psCommand += `$speak.Speak($text);`;
     // psCommand += `Unregister-Event -SourceIdentifier "SpeechEventHandler";`;
     psCommand += `$streamAudio.Flush();`;
     psCommand += `$streamAudio.Position = 0;`;
-    psCommand += `$streamAudio.ToArray();`;
-    // psCommand += `$audioBytes = $streamAudio.ToArray();`;
+    psCommand += `$audioBytes = $streamAudio.ToArray();`;
+    // Send audio data to the Node.js server via a socket connection
+    psCommand += `$uniqueId = [System.Guid]::NewGuid().ToString();`;
+    psCommand += `$client = New-Object System.Net.Sockets.TcpClient('127.0.0.1', 42022);`; // Create a new TCP client object
+    psCommand += `$stream = $client.GetStream();`;
+    psCommand += `$stream.Write($uniqueId, 0, $uniqueId.Length);`; // Send the unique identifier
+    psCommand += `$stream.Write($audioBytes, 0, $audioBytes.Length);`; // Send audio data
+    psCommand += `$stream.Close();`; // Close the stream
+    psCommand += `$client.Close();`; // Close the client connection
     psCommand += `$speak.Dispose();`;
     psCommand += `$streamAudio.Dispose();`;
-    // psCommand += `$audioBytes;`;
-    // console.log("PowerShell Script:", psCommand);
-    args.push(psCommand);
     options.shell = true;
+    args.push(psCommand);
     return { command: COMMAND, args, options };
   }
 
-  buildStreamRealTimeCommand({ text, voice, speed }) {
+  buildStreamRealTimeCommand({ text, voice, speed }) { // Created by Burgil
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change PowerShell encoding to utf-8
@@ -99,7 +104,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `if ($voice) { $speak.SelectVoice($voice) };`; // Select voice if provided
     psCommand += `$speak.Rate = $speed;`; // Set speed if provided
     psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
-    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`;
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
     psCommand += `$speak.Speak($text);`;
     psCommand += `$streamAudio.Flush();`;
     psCommand += `$streamAudio.Position = 0;`;
@@ -129,6 +134,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$client.Close();`; // Close the client connection
     psCommand += `$speak.Dispose();`;
     psCommand += `$streamAudio.Dispose();`;
+    // console.log("PowerShell Script:", psCommand);
     options.shell = true;
     args.push(psCommand);
     return { command: COMMAND, args, options };
