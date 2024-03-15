@@ -47,20 +47,34 @@ app.post('/tts-stream', async (req, res) => {
     }
 });
 
-/*
-// Stream spoken audio in real time example
-const audioStream = [];
-say.streamRealTime("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (data) => {
-    console.log(data)
-    audioStream.push(data);
-}, (finalAudioStream) => {
-    console.log("Finished!", finalAudioStream.length === audioStream.length, finalAudioStream.length, audioStream.length, finalAudioStream, audioStream);
-}, (err) => {
-    console.error(err);
-});
-*/
-
 // Route for text-to-speech streaming in real time - fast
+app.post('/tts-stream-real-time', async (req, res) => {
+    const { text, voice } = req.body;
+    try {
+        say.streamRealTime(text, voice, 1,
+            // Data callback
+            (data) => {
+                res.write(`${data},`);
+            },
+            // Finish callback
+            () => {
+                // End the response when speech is complete
+                res.end();
+            },
+            // Error callback
+            (err) => {
+                // Handle any errors during streaming
+                console.error('Error:', err);
+                res.status(500).json({ error: 'An error occurred while generating speech.' });
+            }
+        );
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({ error: 'An error occurred while generating speech.' });
+    }
+});
+
+// Route for text-to-speech streaming in real time - PassThrough
 // app.post('/tts-stream-real-time', async (req, res) => {
 //     const { text, voice } = req.body;
 //     try {
@@ -93,33 +107,6 @@ say.streamRealTime("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (data) =
 //         res.status(500).json({ error: 'An error occurred while generating speech.' });
 //     }
 // });
-
-// Route for text-to-speech streaming in real time - fast
-app.post('/tts-stream-real-time', async (req, res) => {
-    const { text, voice } = req.body;
-    try {
-        say.streamRealTime(text, voice, 1,
-            // Data callback
-            (data) => {
-                res.write(`${data},`);
-            },
-            // Finish callback
-            () => {
-                // End the response when speech is complete
-                res.end();
-            },
-            // Error callback
-            (err) => {
-                // Handle any errors during streaming
-                console.error('Error:', err);
-                res.status(500).json({ error: 'An error occurred while generating speech.' });
-            }
-        );
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({ error: 'An error occurred while generating speech.' });
-    }
-});
 
 app.get('/voices', async function (req, res) {
     say.getInstalledVoices((err, voices) => {
