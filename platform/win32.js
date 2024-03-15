@@ -105,7 +105,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$streamAudio.Position = 0;`;
     psCommand += `$audioBytes = $streamAudio.ToArray();`;
     // Send audio data to the Node.js server via a socket connection
-    psCommand += `$client = New-Object System.Net.Sockets.TcpClient("localhost", 42022);`; // Create a new TCP client object
+    psCommand += `$client = New-Object System.Net.Sockets.TcpClient('127.0.0.1', 42022);`; // Create a new TCP client object
     psCommand += `$stream = $client.GetStream();`;
     psCommand += `$stream.Write($audioBytes, 0, $audioBytes.Length);`; // Send audio data
     psCommand += `$stream.Close();`; // Close the stream
