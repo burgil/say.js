@@ -5,7 +5,7 @@ const server = new net.Server();
 const eventEmitter = new EventEmitter();
 
 server.on('connection', (socket) => { // Scope is per client
-    console.log('Client connected');
+    // console.log('Client connected');
     let uniqueId;
     let audioChunks = [];
     socket.on('data', (chunk) => {
