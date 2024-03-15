@@ -67,9 +67,9 @@ class SayPlatformWin32 extends SayPlatformBase {
       psCommand += `$speak.Rate = ${adjustedSpeed};`
     }
     psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
-    psCommand += `$formatInfo = New-Object System.Speech.AudioFormat.SpeechAudioFormatInfo(16000, [System.Speech.AudioFormat.AudioBitsPerSample]::Sixteen, [System.Speech.AudioFormat.AudioChannel]::Mono);`;
-    psCommand += `$speak.SetOutputToAudioStream($streamAudio, $formatInfo);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtoaudiostream?view=dotnet-plat-ext-8.0
-    // psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
+    // psCommand += `$formatInfo = New-Object System.Speech.AudioFormat.SpeechAudioFormatInfo(16000, [System.Speech.AudioFormat.AudioBitsPerSample]::Sixteen, [System.Speech.AudioFormat.AudioChannel]::Mono);`;
+    // psCommand += `$speak.SetOutputToAudioStream($streamAudio, $formatInfo);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtoaudiostream?view=dotnet-plat-ext-8.0
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
     // psCommand += `$handler = { param([object]$sender, [System.Speech.Synthesis.SpeechEventArgs]$eventArgs); $audioChunk = $eventArgs.AudioData; $streamAudio.Write($audioChunk, 0, $audioChunk.Length); };`;
     // psCommand += `Register-ObjectEvent -InputObject $speak -EventName "SpeakProgress" -Action $handler -SourceIdentifier "SpeechEventHandler";`;
     psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`;
