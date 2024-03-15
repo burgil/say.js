@@ -170,6 +170,8 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 ## Fork Patch Logs:
 
+### Update 19: I unlocked the speed - Enjoy streaming on ultra high speed now! still requires attention with ports, I wonder if there is any better IPC then making a local server with a port lol, or if there is a way to put it all on the same port or IPC or something idk
+
 ### Update 18: It works!! The frontend example is playing the stream!! Still room for improvement but holy heck dude I made the impossible possible again.
 
 ### Update 17: Still unable to play the streaming audio on the front end - But we're streaming!

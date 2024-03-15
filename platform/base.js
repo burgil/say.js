@@ -258,7 +258,7 @@ class SayPlatformBase {
             client.removeListener('close', onClose);
           });
         }
-      }, 12345);
+      }, 12345); // port conflict requires attention
     }, 1000);
     this.child.stdout.on('data', data => {
       if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {

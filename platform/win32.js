@@ -87,11 +87,11 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, options };
   }
 
-  buildStreamRealTimeCommand({ text, voice, speed }) {
+  buildStreamRealTimeCommand({ text, voice, speed }) { // Created by Burgil
     let args = [];
     let options = {};
-    let psCommand = `chcp 65001;`; // Change PowerShell encoding to utf-8
-    psCommand += `$listener = [System.Net.Sockets.TcpListener]::new('127.0.0.1', 12345);`;
+    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    psCommand += `$listener = [System.Net.Sockets.TcpListener]::new('127.0.0.1', 12345);`; // port conflict requires attention
     psCommand += `$listener.Start();`;
     psCommand += `$client = $listener.AcceptTcpClient();`;
     psCommand += `$stream = $client.GetStream();`;
@@ -102,29 +102,61 @@ class SayPlatformWin32 extends SayPlatformBase {
       let adjustedSpeed = this.convertSpeed(speed || 1);
       psCommand += `$speak.Rate = ${adjustedSpeed};`
     }
-    psCommand += `$chunkSize = 256;`; // Adjust the chunk size as needed
-    psCommand += `$chunks = [System.Collections.Generic.List[string]]::new();`;
-    psCommand += `$textToSpeak = '${text.replace(/'/g, "''")}';`;
-    psCommand += `for ($i = 0; $i -lt $textToSpeak.Length; $i += $chunkSize) {`;
-    psCommand += `    $chunks.Add($textToSpeak.Substring($i, [Math]::Min($chunkSize, $textToSpeak.Length - $i)));`;
-    psCommand += `}`;
-    psCommand += `foreach ($chunk in $chunks) {`;
-    psCommand += `    $streamAudio = New-Object System.IO.MemoryStream;`;
-    psCommand += `    $speak.SetOutputToWaveStream($streamAudio);`;
-    psCommand += `    $speak.Speak($chunk);`;
-    psCommand += `    $streamAudio.Flush();`;
-    psCommand += `    $streamAudio.Position = 0;`;
-    psCommand += `    $audioBytes = $streamAudio.ToArray();`;
-    psCommand += `    $streamAudio.Dispose();`;
-    psCommand += `    $stream.Write($audioBytes, 0, $audioBytes.Length);`;
-    psCommand += `}`;
-    // psCommand += `$stream.Close();`;
+    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
+    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`;
+    psCommand += `$streamAudio.Flush();`;
+    psCommand += `$streamAudio.Position = 0;`;
+    psCommand += `$audioBytes = $streamAudio.ToArray();`;
+    psCommand += `$stream.Write($audioBytes, 0, $audioBytes.Length);`;
+    psCommand += `$speak.Dispose();`;
+    psCommand += `$streamAudio.Dispose();`;
+    psCommand += `$stream.Close();`;
     psCommand += `$client.Close();`;
-    psCommand += `$listener.Close();`;
+    // console.log("PowerShell Script:", psCommand);
     args.push(psCommand);
     options.shell = true;
     return { command: COMMAND, args, options };
   }
+
+  // buildStreamRealTimeChunksCommand({ text, voice, speed }) {
+  //   let args = [];
+  //   let options = {};
+  //   let psCommand = `chcp 65001;`; // Change PowerShell encoding to utf-8
+  //   psCommand += `$listener = [System.Net.Sockets.TcpListener]::new('127.0.0.1', 12345);`; // port conflict requires attention
+  //   psCommand += `$listener.Start();`;
+  //   psCommand += `$client = $listener.AcceptTcpClient();`;
+  //   psCommand += `$stream = $client.GetStream();`;
+  //   psCommand += `Add-Type -AssemblyName System.speech;`;
+  //   psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+  //   if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
+  //   if (speed) {
+  //     let adjustedSpeed = this.convertSpeed(speed || 1);
+  //     psCommand += `$speak.Rate = ${adjustedSpeed};`
+  //   }
+  //   psCommand += `$chunkSize = 256;`; // Adjust the chunk size as needed
+  //   psCommand += `$chunks = [System.Collections.Generic.List[string]]::new();`;
+  //   psCommand += `$textToSpeak = '${text.replace(/'/g, "''")}';`;
+  //   psCommand += `for ($i = 0; $i -lt $textToSpeak.Length; $i += $chunkSize) {`;
+  //   psCommand += `    $chunks.Add($textToSpeak.Substring($i, [Math]::Min($chunkSize, $textToSpeak.Length - $i)));`;
+  //   psCommand += `}`;
+  //   psCommand += `foreach ($chunk in $chunks) {`;
+  //   psCommand += `    $streamAudio = New-Object System.IO.MemoryStream;`;
+  //   psCommand += `    $speak.SetOutputToWaveStream($streamAudio);`;
+  //   psCommand += `    $speak.Speak($chunk);`;
+  //   psCommand += `    $streamAudio.Flush();`;
+  //   psCommand += `    $streamAudio.Position = 0;`;
+  //   psCommand += `    $audioBytes = $streamAudio.ToArray();`;
+  //   psCommand += `    $streamAudio.Dispose();`;
+  //   psCommand += `    $stream.Write($audioBytes, 0, $audioBytes.Length);`;
+  //   psCommand += `}`;
+  //   // psCommand += `$stream.Close();`;
+  //   psCommand += `$client.Close();`;
+  //   psCommand += `$listener.Close();`;
+  //   args.push(psCommand);
+  //   options.shell = true;
+  //   return { command: COMMAND, args, options };
+  // }
 
   runStopCommand() {
     this.child.stdin.pause();
