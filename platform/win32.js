@@ -35,7 +35,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$streamAudio.Position = 0;`;
     psCommand += `$audioBytes = $streamAudio.ToArray();`;
     // Send audio data to the Node.js server via a socket connection
-    psCommand += `$uniqueId = '${uuid}';`; // [System.Guid]::NewGuid().ToString()
+    psCommand += `$uniqueId = [System.Text.Encoding]::UTF8.GetBytes('${uuid}');`; // [System.Guid]::NewGuid().ToString()
     psCommand += `$client = New-Object System.Net.Sockets.TcpClient('127.0.0.1', 42022);`; // Create a new TCP client object
     psCommand += `$stream = $client.GetStream();`;
     psCommand += `$stream.Write($uniqueId, 0, $uniqueId.Length);`; // Send the unique identifier
@@ -83,7 +83,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     //   psCommand += `    $stream.Write($audioBytes, 0, $audioBytes.Length);`;
     //   psCommand += `}`;
     // Send audio data to the Node.js server via a socket connection
-    psCommand += `$uniqueId = '${uuid}';`; // [System.Guid]::NewGuid().ToString()
+    psCommand += `$uniqueId = [System.Text.Encoding]::UTF8.GetBytes('${uuid}');`; // [System.Guid]::NewGuid().ToString()
     psCommand += `$client = New-Object System.Net.Sockets.TcpClient('127.0.0.1', 42022);`; // Create a new TCP client object
     psCommand += `$stream = $client.GetStream();`;
     psCommand += `$stream.Write($uniqueId, 0, $uniqueId.Length);`; // Send the unique identifier
