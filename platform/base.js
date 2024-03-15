@@ -1,7 +1,7 @@
 const childProcess = require('child_process')
 const once = require('one-time')
 const symbolTTS = require('../symbol-tts.js')
-const { server, eventEmitter } = require('./net.js');
+const eventEmitter = require('./net.js');
 
 class SayPlatformBase {
   constructor() {
