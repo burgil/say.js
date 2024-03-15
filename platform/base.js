@@ -140,7 +140,7 @@ class SayPlatformBase {
         return
       }
       try {
-        var { command, args, pipedData, options } = this.buildStreamCommand({
+        var { command, args, options } = this.buildStreamCommand({
           text: symbolTTS(text),
           voice,
           speed
@@ -161,8 +161,9 @@ class SayPlatformBase {
           // console.log('Output from PowerShell:', data.toString());
           // audioStream = Buffer.concat([audioStream, data])
           for (const audioBit of data.split('\r\n')) {
-              finalArray.push(+audioBit);
-              // console.log(audioBit);
+              if (audioBit.trim() !== '') {
+                finalArray.push(parseInt(audioBit.trim())); // Parse as integer
+              }
           }
         }
       })
@@ -170,7 +171,7 @@ class SayPlatformBase {
         console.error('Error output from PowerShell:', data.toString());
         reject(new Error(data.toString()))
       })
-      if (pipedData) this.child.stdin.end(pipedData)
+      this.child.stdin.end()
       this.child.addListener('exit', (code, signal) => {
         if (code === null || signal !== null) return reject(new Error(`say.stream(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
         this.child = null
@@ -201,7 +202,7 @@ class SayPlatformBase {
       })
     }
     try {
-      var { command, args, pipedData, options } = this.buildStreamCommand({
+      var { command, args, options } = this.buildStreamCommand({
         text: symbolTTS(text),
         voice,
         speed
@@ -228,7 +229,7 @@ class SayPlatformBase {
       console.error('Error output from PowerShell:', data.toString());
       error_callback(new Error(data.toString()))
     })
-    if (pipedData) this.child.stdin.end(pipedData)
+    this.child.stdin.end()
     this.child.addListener('exit', (code, signal) => {
       if (code === null || signal !== null) return reject(new Error(`say.streamRealTime(): could not talk, had an error [code: ${code}] [signal: ${signal}]`))
       this.child = null

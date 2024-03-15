@@ -84,7 +84,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     // console.log("PowerShell Script:", psCommand);
     args.push(psCommand);
     options.shell = true;
-    return { command: COMMAND, args, pipedData: text, options };
+    return { command: COMMAND, args, options };
   }
 
   runStopCommand() {
