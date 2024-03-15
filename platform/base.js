@@ -1,6 +1,7 @@
 const childProcess = require('child_process')
 const once = require('one-time')
 const symbolTTS = require('../symbol-tts.js')
+const net = require('net');
 
 class SayPlatformBase {
   constructor () {
@@ -210,6 +211,17 @@ class SayPlatformBase {
         error_callback(error);
       })
     }
+    const client = new net.Socket();
+    console.log('test');
+    client.connect(12345, '127.0.0.1', () => {
+        console.log('Connected');
+    });
+    client.on('data', (data) => {
+        console.log("Incoming Data:", data)
+    });
+    client.on('close', () => {
+        console.log('Connection closed');
+    });
     this.child = childProcess.spawn(command, args, options);
     this.child.stdin.setEncoding('utf-8');
     this.child.stderr.setEncoding('utf-8');

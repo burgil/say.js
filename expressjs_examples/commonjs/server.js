@@ -34,10 +34,10 @@ app.post('/tts-export', (req, res) => { // warning unless some unique uuid will 
 
 // Route for text-to-speech streaming - slow
 app.post('/tts-stream', async (req, res) => {
-    const { text, voice, speed } = req.body;
+    const { text, voice } = req.body;
     try {
         // Stream spoken audio
-        const spokenBuffer = await say.stream(text, voice, speed);
+        const spokenBuffer = await say.stream(text, voice);
         const uint8Array = new Uint8Array(spokenBuffer);
         // Send the spoken audio buffer (uint8Array) as the response
         res.send(uint8Array);
@@ -61,21 +61,52 @@ say.streamRealTime("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (data) =
 */
 
 // Route for text-to-speech streaming in real time - fast
+// app.post('/tts-stream-real-time', async (req, res) => {
+//     const { text, voice } = req.body;
+//     try {
+//         const passThroughStream = new PassThrough();
+//         // Stream spoken audio in real-time
+//         say.streamRealTime(text, voice,
+//             // Data callback
+//             (data) => {
+//                 // Write data to the PassThrough stream
+//                 passThroughStream.write(data.toString());
+//             },
+//             // Finish callback
+//             () => {
+//                 // End the PassThrough stream when speech is complete
+//                 passThroughStream.end();
+//             },
+//             // Error callback
+//             (err) => {
+//                 // Handle any errors during streaming
+//                 console.error('Error:', err);
+//                 res.status(500).json({ error: 'An error occurred while generating speech.' });
+//             }
+//         );
+//         // Set the response headers
+//         res.setHeader('Content-Type', 'audio/wav');
+//         // Pipe the PassThrough stream to the response
+//         passThroughStream.pipe(res);
+//     } catch (err) {
+//         console.error('Error:', err);
+//         res.status(500).json({ error: 'An error occurred while generating speech.' });
+//     }
+// });
+
+// Route for text-to-speech streaming in real time - fast
 app.post('/tts-stream-real-time', async (req, res) => {
-    const { text, voice, speed } = req.body;
+    const { text, voice } = req.body;
     try {
-        const passThroughStream = new PassThrough();
-        // Stream spoken audio in real-time
-        say.streamRealTime(text, voice, speed,
+        say.streamRealTime(text, voice, 1,
             // Data callback
             (data) => {
-                // Write data to the PassThrough stream
-                passThroughStream.write(data.toString());
+                res.write(`${data},`);
             },
             // Finish callback
             () => {
-                // End the PassThrough stream when speech is complete
-                passThroughStream.end();
+                // End the response when speech is complete
+                res.end();
             },
             // Error callback
             (err) => {
@@ -84,10 +115,6 @@ app.post('/tts-stream-real-time', async (req, res) => {
                 res.status(500).json({ error: 'An error occurred while generating speech.' });
             }
         );
-        // Set the response headers
-        res.setHeader('Content-Type', 'audio/wav');
-        // Pipe the PassThrough stream to the response
-        passThroughStream.pipe(res);
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'An error occurred while generating speech.' });

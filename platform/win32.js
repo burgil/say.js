@@ -55,10 +55,45 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, pipedData: text, options };
   }
 
-  buildStreamCommand({ text, voice, speed }) { // Created by Burgil
+  // buildStreamCommand({ text, voice, speed }) { // Created by Burgil
+  //   let args = [];
+  //   let options = {};
+  //   let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+  //   psCommand += `Add-Type -AssemblyName System.speech;`;
+  //   psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+  //   if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
+  //   if (speed) {
+  //     let adjustedSpeed = this.convertSpeed(speed || 1);
+  //     psCommand += `$speak.Rate = ${adjustedSpeed};`
+  //   }
+  //   psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
+  //   // psCommand += `$formatInfo = New-Object System.Speech.AudioFormat.SpeechAudioFormatInfo(16000, [System.Speech.AudioFormat.AudioBitsPerSample]::Sixteen, [System.Speech.AudioFormat.AudioChannel]::Mono);`;
+  //   // psCommand += `$speak.SetOutputToAudioStream($streamAudio, $formatInfo);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtoaudiostream?view=dotnet-plat-ext-8.0
+  //   psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
+  //   // psCommand += `$handler = { param([object]$sender, [System.Speech.Synthesis.SpeechEventArgs]$eventArgs); $audioChunk = $eventArgs.AudioData; $streamAudio.Write($audioChunk, 0, $audioChunk.Length); };`;
+  //   // psCommand += `Register-ObjectEvent -InputObject $speak -EventName "SpeakProgress" -Action $handler -SourceIdentifier "SpeechEventHandler";`;
+  //   psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`;
+  //   // psCommand += `Unregister-Event -SourceIdentifier "SpeechEventHandler";`;
+  //   // psCommand += `$streamAudio.Flush();`;
+  //   psCommand += `$streamAudio.Position = 0;`;
+  //   psCommand += `$streamAudio.ToArray();`;
+  //   // psCommand += `$audioBytes = $streamAudio.ToArray();`;
+  //   // psCommand += `$speak.Dispose();`;
+  //   // psCommand += `$streamAudio.Dispose();`;
+  //   // psCommand += `$audioBytes;`;
+  //   // console.log("PowerShell Script:", psCommand);
+  //   args.push(psCommand);
+  //   options.shell = true;
+  //   return { command: COMMAND, args, options };
+  // }
+  buildStreamCommand({ text, voice, speed }) {
     let args = [];
     let options = {};
-    let psCommand = `chcp 65001;`; // Change powershell encoding to utf-8
+    let psCommand = `chcp 65001;`; // Change PowerShell encoding to utf-8
+    psCommand += `$listener = [System.Net.Sockets.TcpListener]::new('127.0.0.1', 12345);`;
+    psCommand += `$listener.Start();`;
+    psCommand += `$client = $listener.AcceptTcpClient();`;
+    psCommand += `$stream = $client.GetStream();`;
     psCommand += `Add-Type -AssemblyName System.speech;`;
     psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
     if (voice) psCommand += `$speak.SelectVoice('${voice}');`;
@@ -66,22 +101,25 @@ class SayPlatformWin32 extends SayPlatformBase {
       let adjustedSpeed = this.convertSpeed(speed || 1);
       psCommand += `$speak.Rate = ${adjustedSpeed};`
     }
-    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
-    // psCommand += `$formatInfo = New-Object System.Speech.AudioFormat.SpeechAudioFormatInfo(16000, [System.Speech.AudioFormat.AudioBitsPerSample]::Sixteen, [System.Speech.AudioFormat.AudioChannel]::Mono);`;
-    // psCommand += `$speak.SetOutputToAudioStream($streamAudio, $formatInfo);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtoaudiostream?view=dotnet-plat-ext-8.0
-    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`; // https://learn.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer.setoutputtowavefile?view=dotnet-plat-ext-8.0
-    // psCommand += `$handler = { param([object]$sender, [System.Speech.Synthesis.SpeechEventArgs]$eventArgs); $audioChunk = $eventArgs.AudioData; $streamAudio.Write($audioChunk, 0, $audioChunk.Length); };`;
-    // psCommand += `Register-ObjectEvent -InputObject $speak -EventName "SpeakProgress" -Action $handler -SourceIdentifier "SpeechEventHandler";`;
-    psCommand += `$speak.Speak('${text.replace(/'/g, "''")}');`;
-    // psCommand += `Unregister-Event -SourceIdentifier "SpeechEventHandler";`;
-    // psCommand += `$streamAudio.Flush();`;
-    psCommand += `$streamAudio.Position = 0;`;
-    psCommand += `$streamAudio.ToArray();`;
-    // psCommand += `$audioBytes = $streamAudio.ToArray();`;
-    // psCommand += `$speak.Dispose();`;
-    // psCommand += `$streamAudio.Dispose();`;
-    // psCommand += `$audioBytes;`;
-    // console.log("PowerShell Script:", psCommand);
+    psCommand += `$chunkSize = 256;`; // Adjust the chunk size as needed
+    psCommand += `$chunks = [System.Collections.Generic.List[string]]::new();`;
+    psCommand += `$textToSpeak = '${text.replace(/'/g, "''")}';`;
+    psCommand += `for ($i = 0; $i -lt $textToSpeak.Length; $i += $chunkSize) {`;
+    psCommand += `    $chunks.Add($textToSpeak.Substring($i, [Math]::Min($chunkSize, $textToSpeak.Length - $i)));`;
+    psCommand += `}`;
+    psCommand += `foreach ($chunk in $chunks) {`;
+    psCommand += `    $streamAudio = New-Object System.IO.MemoryStream;`;
+    psCommand += `    $speak.SetOutputToWaveStream($streamAudio);`;
+    psCommand += `    $speak.Speak($chunk);`;
+    psCommand += `    $streamAudio.Flush();`;
+    psCommand += `    $streamAudio.Position = 0;`;
+    psCommand += `    $audioBytes = $streamAudio.ToArray();`;
+    psCommand += `    $streamAudio.Dispose();`;
+    psCommand += `    $stream.Write($audioBytes, 0, $audioBytes.Length);`;
+    psCommand += `}`;
+    psCommand += `$stream.Close();`;
+    psCommand += `$client.Close();`;
+    psCommand += `$listener.Close();`;
     args.push(psCommand);
     options.shell = true;
     return { command: COMMAND, args, options };
