@@ -5,7 +5,8 @@
   "main": "server.mjs",
   "type": "module",
   "scripts": {
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "debug": "nodemon server.js"
   },
   "keywords": [],
   "author": "github.com/burgil",

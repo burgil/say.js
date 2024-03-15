@@ -215,7 +215,7 @@ class SayPlatformBase {
       if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
         if (ignoreCHCP) ignoreCHCP = false;
         // console.log('Output from PowerShell:', data.toString());
-        data_callback(data);
+        data_callback(data.toString());
         audioStream = Buffer.concat([audioStream, data])
       }
     })
