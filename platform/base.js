@@ -22,8 +22,8 @@ class SayPlatformBase {
         reject(new TypeError('say.stream(): must provide text parameter'))
         return
       }
+      const my_uuid = uuidv4();
       try {
-        const my_uuid = uuidv4();
         var { command, args, options } = this.buildStreamCommand({
           uuid: my_uuid,
           text: symbolTTS(text),
@@ -38,18 +38,27 @@ class SayPlatformBase {
       this.child.stdin.setEncoding('utf-8');
       this.child.stderr.setEncoding('utf-8');
       const audioStream = [];
-      let ignoreCHCP = true;
-      this.child.stdout.on('data', data => {
-        if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
-          if (ignoreCHCP) ignoreCHCP = false;
-          // console.log('Output from PowerShell:', data.toString());
-          for (const audioBit of data.toString().split('\r\n')) {
-            if (audioBit.trim() !== '') {
-              audioStream.push(parseInt(audioBit.trim()));
-            }
-          }
+      // The Old Way:
+      // let ignoreCHCP = true;
+      // this.child.stdout.on('data', data => {
+      //   if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
+      //     if (ignoreCHCP) ignoreCHCP = false;
+      //     // console.log('Output from PowerShell:', data.toString());
+      //     for (const audioBit of data.toString().split('\r\n')) {
+      //       if (audioBit.trim() !== '') {
+      //         audioStream.push(parseInt(audioBit.trim()));
+      //       }
+      //     }
+      //   }
+      // })
+      eventEmitter.on('audioData', ({ uniqueId, audioBuffer }) => {
+        if (uniqueId === my_uuid) {
+          // Do something with the received audio data in the scope of streamRealTime
+          console.log('Finally1 Received audio data for ID', uniqueId, ':', audioBuffer);
+          // Remove the event listener after processing the data once
+          eventEmitter.removeListener('audioData', this);
         }
-      })
+      });
       this.child.stderr.on('data', data => {
         console.error('Error output from PowerShell:', data.toString());
         reject(new Error(data.toString()))
@@ -84,8 +93,8 @@ class SayPlatformBase {
         error_callback(new TypeError('say.streamRealTime(): must provide text parameter'))
       })
     }
+    const my_uuid = uuidv4();
     try {
-      const my_uuid = uuidv4();
       var { command, args, options } = this.buildStreamRealTimeCommand({
         uuid: my_uuid,
         text: symbolTTS(text),
@@ -101,7 +110,14 @@ class SayPlatformBase {
     this.child.stdin.setEncoding('utf-8');
     this.child.stderr.setEncoding('utf-8');
     const audioStream = [];
-    // TODO
+    eventEmitter.on('audioData', ({ uniqueId, audioBuffer }) => {
+      if (uniqueId === my_uuid) {
+        // Do something with the received audio data in the scope of streamRealTime
+        console.log('Finally2 Received audio data for ID', uniqueId, ':', audioBuffer);
+        // Remove the event listener after processing the data once
+        eventEmitter.removeListener('audioData', this);
+      }
+    });
     this.child.stderr.on('data', data => {
       console.error('Error output from PowerShell:', data.toString());
       error_callback(new Error(data.toString()))
