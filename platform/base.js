@@ -3,7 +3,26 @@ const once = require('one-time')
 const symbolTTS = require('../symbol-tts.js')
 const net = require('net');
 const server = new net.Server();
-server.listen(12345, '127.0.0.1');
+server.on('connection', (socket) => {
+  console.log('Client connected');
+  const audioChunks = [];
+  socket.on('data', (chunk) => {
+    audioChunks.push(chunk);
+  });
+  socket.on('end', () => {
+    const audioBuffer = Buffer.concat(audioChunks);
+    console.log('Received audio data:', audioBuffer);
+  });
+  socket.on('error', (err) => {
+    console.error('Socket error:', err);
+  });
+});
+server.on('error', (err) => {
+  console.error('Server error:', err);
+});
+server.listen(42022, '127.0.0.1', () => {
+  console.log('Local Server listening on port 42022');
+});
 
 // New Retry:
 // function connectToService(callback, server) {

@@ -95,17 +95,19 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$voice = '${voice || ''}';`; // Voice is optional
     psCommand += `$speed = ${this.convertSpeed(speed || 1)};`; // Speed is optional
     psCommand += `$audioBytes = (Add-Type -AssemblyName System.speech;`;
-    psCommand += ` $speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
-    psCommand += ` if ($voice) { $speak.SelectVoice($voice) };`; // Select voice if provided
-    psCommand += ` $speak.Rate = $speed;`; // Set speed if provided
-    psCommand += ` $streamAudio = New-Object System.IO.MemoryStream;`;
-    psCommand += ` $speak.SetOutputToWaveStream($streamAudio);`;
-    psCommand += ` $speak.Speak($text);`;
-    psCommand += ` $streamAudio.Flush();`;
-    psCommand += ` $streamAudio.Position = 0;`;
-    psCommand += ` $audioBytes = $streamAudio.ToArray());`;
-    psCommand += `$response = Invoke-WebRequest -Uri "http://localhost:3000/upload" -Method POST -Body $audioBytes -ContentType "application/octet-stream";`; // Change URL to match your Node.js server endpoint
+    psCommand += `$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer;`;
+    psCommand += `if ($voice) { $speak.SelectVoice($voice) };`; // Select voice if provided
+    psCommand += `$speak.Rate = $speed;`; // Set speed if provided
+    psCommand += `$streamAudio = New-Object System.IO.MemoryStream;`;
+    psCommand += `$speak.SetOutputToWaveStream($streamAudio);`;
+    psCommand += `$speak.Speak($text);`;
+    psCommand += `$streamAudio.Flush();`;
+    psCommand += `$streamAudio.Position = 0;`;
+    psCommand += `$audioBytes = $streamAudio.ToArray());`;
+    psCommand += `$response = Invoke-WebRequest -Uri "http://localhost:42022/" -Method POST -Body $audioBytes -ContentType "application/octet-stream";`; // Change URL to match your Node.js server endpoint
     psCommand += `$response.StatusCode;`; // Output status code
+    psCommand += `$speak.Dispose();`;
+    psCommand += `$streamAudio.Dispose();`;
     options.shell = true;
     args.push(psCommand);
     return { command: COMMAND, args, options };
