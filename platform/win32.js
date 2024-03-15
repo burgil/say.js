@@ -1,5 +1,5 @@
 const childProcess = require('child_process')
-
+const { v4: uuidv4 } = require('uuid');
 const SayPlatformBase = require('./base.js')
 
 const BASE_SPEED = 0 // Unsupported
