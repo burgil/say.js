@@ -47,6 +47,19 @@ app.post('/tts-stream', async (req, res) => {
     }
 });
 
+/*
+// Stream spoken audio in real time example
+const audioStream = [];
+say.streamRealTime("I'm sorry, Dave.", 'Microsoft David Desktop', 0.75, (data) => {
+    console.log(data)
+    audioStream.push(data);
+}, (finalAudioStream) => {
+    console.log("Finished!", finalAudioStream.length === audioStream.length, finalAudioStream.length, audioStream.length, finalAudioStream, audioStream);
+}, (err) => {
+    console.error(err);
+});
+*/
+
 // Route for text-to-speech streaming in real time - fast
 app.post('/tts-stream-real-time', async (req, res) => {
     const { text, voice, speed } = req.body;
