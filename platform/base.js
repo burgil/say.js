@@ -162,7 +162,9 @@ class SayPlatformBase {
         return
       }
       try {
+        const my_uuid = uuidv4();
         var { command, args, options } = this.buildStreamCommand({
+          uuid: my_uuid,
           text: symbolTTS(text),
           voice,
           speed
@@ -222,7 +224,9 @@ class SayPlatformBase {
       })
     }
     try {
+      const my_uuid = uuidv4();
       var { command, args, options } = this.buildStreamRealTimeCommand({
+        uuid: my_uuid,
         text: symbolTTS(text),
         voice,
         speed

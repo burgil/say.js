@@ -55,7 +55,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, pipedData: text, options };
   }
 
-  buildStreamCommand({ text, voice, speed }) { // Created by Burgil
+  buildStreamCommand({ uuid, text, voice, speed }) { // Created by Burgil
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change PowerShell encoding to utf-8
@@ -78,7 +78,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `$streamAudio.Position = 0;`;
     psCommand += `$audioBytes = $streamAudio.ToArray();`;
     // Send audio data to the Node.js server via a socket connection
-    psCommand += `$uniqueId = '${uuidv4()}';`; // [System.Guid]::NewGuid().ToString()
+    psCommand += `$uniqueId = '${uuid}';`; // [System.Guid]::NewGuid().ToString()
     psCommand += `$client = New-Object System.Net.Sockets.TcpClient('127.0.0.1', 42022);`; // Create a new TCP client object
     psCommand += `$stream = $client.GetStream();`;
     psCommand += `$stream.Write($uniqueId, 0, $uniqueId.Length);`; // Send the unique identifier
@@ -92,7 +92,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     return { command: COMMAND, args, options };
   }
 
-  buildStreamRealTimeCommand({ text, voice, speed }) { // Created by Burgil
+  buildStreamRealTimeCommand({ uuid, text, voice, speed }) { // Created by Burgil
     let args = [];
     let options = {};
     let psCommand = `chcp 65001;`; // Change PowerShell encoding to utf-8
@@ -125,7 +125,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     //   psCommand += `    $stream.Write($audioBytes, 0, $audioBytes.Length);`;
     //   psCommand += `}`;
     // Send audio data to the Node.js server via a socket connection
-    psCommand += `$uniqueId = '${uuidv4()}';`; // [System.Guid]::NewGuid().ToString()
+    psCommand += `$uniqueId = '${uuid}';`; // [System.Guid]::NewGuid().ToString()
     psCommand += `$client = New-Object System.Net.Sockets.TcpClient('127.0.0.1', 42022);`; // Create a new TCP client object
     psCommand += `$stream = $client.GetStream();`;
     psCommand += `$stream.Write($uniqueId, 0, $uniqueId.Length);`; // Send the unique identifier
