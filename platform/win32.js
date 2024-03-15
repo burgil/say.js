@@ -118,7 +118,7 @@ class SayPlatformWin32 extends SayPlatformBase {
     psCommand += `    $streamAudio.Dispose();`;
     psCommand += `    $stream.Write($audioBytes, 0, $audioBytes.Length);`;
     psCommand += `}`;
-    psCommand += `$stream.Close();`;
+    // psCommand += `$stream.Close();`;
     psCommand += `$client.Close();`;
     psCommand += `$listener.Close();`;
     args.push(psCommand);

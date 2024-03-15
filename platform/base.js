@@ -13,7 +13,7 @@ function connectToService(callback, port) {
     client.on('error', (error) => {
       if (error.code === 'ECONNREFUSED') {
         console.log('Connection refused, retrying...');
-        setTimeout(retryConnection, 1000); // Retry after 1 second
+        // setTimeout(retryConnection, 1000); // Retry after 1 second
       } else {
         console.error('Error connecting to service:', error);
         callback(error);
@@ -243,22 +243,23 @@ class SayPlatformBase {
     const onClose = () => {
       console.log('Connection closed');
     };
-    connectToService((error, client) => {
-      if (error) {
-        console.error('Failed to connect to service:', error);
-        // Handle the error appropriately, e.g., exit the application
-      } else {
-        // Connection successful, proceed with your logic using the 'client' object
-        client.on('data', onData);
-        client.on('close', onClose);
-
-        // Add cleanup logic when the client disconnects
-        client.on('close', () => {
-          client.removeListener('data', onData);
-          client.removeListener('close', onClose);
-        });
-      }
-    }, 12345);
+    setTimeout(function() {
+      connectToService((error, client) => {
+        if (error) {
+          console.error('Failed to connect to service:', error);
+          // Handle the error appropriately, e.g., exit the application
+        } else {
+          // Connection successful, proceed with your logic using the 'client' object
+          client.on('data', onData);
+          client.on('close', onClose);
+          // Add cleanup logic when the client disconnects
+          client.on('close', () => {
+            client.removeListener('data', onData);
+            client.removeListener('close', onClose);
+          });
+        }
+      }, 12345);
+    }, 1000);
     this.child.stdout.on('data', data => {
       if (!ignoreCHCP || !data.toString().includes('Active code page: 65001')) {
         if (ignoreCHCP) ignoreCHCP = false;
