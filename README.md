@@ -170,6 +170,8 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 ## Fork Patch Logs:
 
+### Update 18: It works!! The frontend example is playing the stream!! Still room for improvement but holy heck dude I made the impossible possible again.
+
 ### Update 17: Still unable to play the streaming audio on the front end - But we're streaming!
 
 ### Update 16: Fixed backend streaming, now frontend is still returning Uncaught (in promise) DOMException: Failed to load because no supported source was found.
