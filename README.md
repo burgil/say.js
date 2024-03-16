@@ -178,7 +178,7 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 Goal in life: Uint8Array
 
-* Debuggeed some lines
+* Debugged some lines
 * Removed debugging
 * Got the output to show on javascript!
 * Found the issue thanks to `// console.log('Output from PowerShell:', data.toString());`
