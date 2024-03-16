@@ -150,7 +150,7 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 
 ## Fork Patch Logs:
 
-### Update 20: I fixed conflics with IPC and streamed it all using one server, still need some work to do in order to link it back
+### Update 20: I fixed conflicts with IPC and streamed it all using one server, still need some work to do in order to link it back
 
 ### Update 19: I unlocked the speed - Enjoy streaming on ultra high speed now! still requires attention with ports, I wonder if there is any better IPC then making a local server with a port lol, or if there is a way to put it all on the same port or IPC or something idk
 
