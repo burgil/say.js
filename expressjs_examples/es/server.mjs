@@ -51,14 +51,19 @@ app.post('/tts-stream', async (req, res) => {
     }
 });
 
-app.get('/voices', async function (req, res) {
+let cachedVoices = new Promise(function(resolve, reject) {
     say.getInstalledVoices((err, voices) => {
         if (err) {
-            console.error('Error retrieving installed voices:', err);
-            return res.status(500).json({ error: 'An error occurred while retrieving voices.' });
+            console.error('Error:', { error: err, message: 'An error occurred while retrieving voices.' })
+            return reject({ error: err, message: 'An error occurred while retrieving voices.' });
         }
-        res.json(voices);
+        resolve(voices);
+        cachedVoices = voices;
     });
+});
+
+app.get('/voices', async function (req, res) {
+    res.json(cachedVoices instanceof Promise ? await cachedVoices : cachedVoices);
 });
 
 const port = 80;
