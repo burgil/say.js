@@ -100,8 +100,11 @@
             if (!response.ok) {
               throw new Error('Network response was not ok');
             }
-            const responseData = await response.json();
-            let audioData = new Uint8Array(Object.values(responseData).join().split(','));
+            // Old method that also works but lags the UI for a moment: (Cool way to end uint8Arrays with express.js)
+            // const responseData = await response.json();
+            // let audioData = new Uint8Array(Object.values(responseData).join().split(','));
+            const responseData = await response.arrayBuffer();
+            let audioData = new Uint8Array(responseData);
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const responseBuffer = await audioContext.decodeAudioData(audioData.buffer.slice(0));
             const source = audioContext.createBufferSource();

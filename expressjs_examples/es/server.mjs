@@ -40,9 +40,11 @@ app.post('/tts-stream', async (req, res) => {
     try {
         // Stream spoken audio
         const spokenBuffer = await say.stream(text, voice);
-        const uint8Array = new Uint8Array(spokenBuffer);
-        // Send the spoken audio buffer (uint8Array) as the response
-        res.send(uint8Array);
+        res.write(spokenBuffer,'binary');
+        res.end(null, 'binary');
+        // Old method that also works but lags the UI for a moment: (Cool way to end uint8Arrays with express.js)
+        // const uint8Array = new Uint8Array(spokenBuffer);
+        // res.send(uint8Array);
     } catch (err) {
         console.error('Error:', err);
         res.status(500).json({ error: 'An error occurred while generating speech.' });
