@@ -1,8 +1,8 @@
 {
-  "name": "say",
-  "description": "TTS (Text To Speech) Module for Node.js",
-  "version": "0.16.0",
-  "author": "Marak Squires",
+  "name": "sayjs",
+  "description": "Improved TTS (Text To Speech) Module for Node.js",
+  "version": "2.0.0",
+  "author": "Burgil & Marak Squires",
   "license": "MIT",
   "scripts": {
     "test": "standard && ./examples/basic-callback.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/burgil/say.js.git"
+    "url": "http://github.com/burgil/sayjs.git"
   },
   "typings": "index.d.ts",
   "engines": {

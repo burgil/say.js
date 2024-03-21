@@ -1,13 +1,13 @@
-#### Modified to support streaming and all open pull requests has been merged manually one by one - TTS (text to speech) for node.js. send text from node.js to your speakers (or clients using express.js). Join the discussions: https://github.com/burgil/say.js/discussions/1
+#### Modified to support streaming and all open pull requests has been merged manually one by one - TTS (text to speech) for node.js. send text from node.js to your speakers (or clients using express.js). Join the discussions: https://github.com/burgil/sayjs/discussions/1
 
-### More info about this fork can be found on this comment: https://github.com/Marak/say.js/issues/123#issuecomment-1996546069
+### More info about this fork can be found on this comment: https://github.com/burgil/sayjs/issues/123#issuecomment-1996546069
 
-<img src="https://github.com/Marak/say.js/raw/master/logo.png" />
+<img src="https://github.com/burgil/sayjs/raw/master/logo.png" />
 
 ## Installing burgil say.js fork
 
 ```bash
-npm install burgil/say.js
+npm install burgil/sayjs
 ```
 
 ## Usage (Use it like you normally would)
@@ -61,7 +61,7 @@ main();
 
 ## Express JS Examples
 Checkout the folder `expressjs_examples` on the repo root.
-https://github.com/burgil/say.js/tree/master/expressjs_examples
+https://github.com/burgil/sayjs/tree/master/expressjs_examples
 
 ### Methods
 
@@ -106,7 +106,7 @@ say.getInstalledVoices(callback)
 ### Testing examples:
 
 ```bash
-git clone https://github.com/burgil/say.js/
+git clone https://github.com/burgil/sayjs/
 cd say.js
 npm install
 
@@ -145,7 +145,7 @@ Windows  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white
 * Mac OS X (comes with `say`)
 * Linux with Festival installed
 * Windows (comes with SAPI.SpVoice)
-  * Needs to have Powershell installed and available in $PATH (see [issue #75](https://github.com/Marak/say.js/issues/75))
+  * Needs to have Powershell installed and available in $PATH (see [issue #75](https://github.com/burgil/sayjs/issues/75))
 
 
 ## Fork Patch Logs:

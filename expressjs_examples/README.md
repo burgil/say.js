@@ -1,6 +1,6 @@
 ## Spoiler:
 
-![image](https://github.com/burgil/say.js/assets/41600149/e0469b61-4178-4279-85ba-ba4e9d4721f5)
+![image](https://github.com/burgil/sayjs/assets/41600149/e0469b61-4178-4279-85ba-ba4e9d4721f5)
 
 # Pick your syntax:
 
@@ -33,11 +33,11 @@ TODO: add authentication, security, rate limits and etc
 This is how I installed this fork on those projects:
 
 ```bash
-npm install burgil/say.js
+npm install burgil/sayjs
 ```
 
 ```js
-// package.json dependencies + "say": "github:burgil/say.js"
+// package.json dependencies + "say": "github:burgil/sayjs"
 
 // CommonJS:
 const say = require('say');

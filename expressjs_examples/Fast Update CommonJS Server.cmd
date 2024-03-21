@@ -1,3 +1,3 @@
 @echo off
 cd commonjs
-npm install burgil/say.js
+npm install burgil/sayjs
